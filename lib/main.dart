@@ -46,8 +46,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       vsync: this,
       duration: const Duration(seconds: 5),
     )..addListener(() {
-      setState(() {});
-    });
+        setState(() {});
+      });
     controller.repeat(reverse: true);
     super.initState();
   }
@@ -120,8 +120,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
           ),
           Padding(
             padding: EdgeInsets.only(
-                left: MediaQuery.of(context).size.width * 0.14,
-                bottom: MediaQuery.of(context).size.height * 0.009,
+              left: MediaQuery.of(context).size.width * 0.14,
+              bottom: MediaQuery.of(context).size.height * 0.009,
             ),
             child: Align(
               alignment: Alignment.centerLeft,
@@ -161,11 +161,13 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                   maxLines: 10,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Color.fromRGBO(56, 78, 183, 1)),
+                      borderSide: const BorderSide(
+                          color: Color.fromRGBO(56, 78, 183, 1)),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Color.fromRGBO(72, 62, 168, 1)),
+                      borderSide: const BorderSide(
+                          color: Color.fromRGBO(72, 62, 168, 1)),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     hintText: 'Input your text here',
@@ -180,14 +182,12 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
             ),
             child: const Align(
               alignment: Alignment.centerLeft,
-              child: Text(
-                'Parsing...',
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.w700,
-                  color: Color.fromRGBO(103, 103, 103, 1),
-                )
-              ),
+              child: Text('Parsing...',
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w700,
+                    color: Color.fromRGBO(103, 103, 103, 1),
+                  )),
             ),
           ),
           ClipRRect(
@@ -197,37 +197,34 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
               child: LinearProgressIndicator(
                 minHeight: 22,
                 backgroundColor: const Color.fromRGBO(190, 200, 236, 1),
-                valueColor: const AlwaysStoppedAnimation<Color>(Color.fromRGBO(72, 62, 168, 1)),
+                valueColor: const AlwaysStoppedAnimation<Color>(
+                    Color.fromRGBO(72, 62, 168, 1)),
                 value: controller.value,
                 semanticsLabel: 'parsing indicator',
               ),
             ),
           ),
-          const Text(
-            '76% completed',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w500,
-              color: Color.fromRGBO(72, 62, 168, 0.5),
-            )
-          ),
+          const Text('76% completed',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w500,
+                color: Color.fromRGBO(72, 62, 168, 0.5),
+              )),
           Padding(
-            padding: EdgeInsets.only(
-                top: MediaQuery.of(context).size.height * 0.1
-            ),
+            padding:
+                EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.1),
             child: SizedBox(
               width: MediaQuery.of(context).size.width * 0.9,
               height: MediaQuery.of(context).size.height * 0.06,
               child: ElevatedButton(
-                  onPressed: () {
-                  },
+                  onPressed: () {},
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.resolveWith<Color?>(
                       (Set<MaterialState> states) {
                         if (states.contains(MaterialState.pressed)) {
                           return const Color.fromRGBO(72, 62, 168, 0.5);
                         }
-                        return const Color.fromRGBO(72, 62, 168, 1); // Use the component's default.
+                        return const Color.fromRGBO(72, 62, 168, 1);
                       },
                     ),
                     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
@@ -236,14 +233,12 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                       ),
                     ),
                   ),
-                  child: const Text(
-                    'UPLOAD',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700,
-                    )
-                  )),
+                  child: const Text('START MEMORIZE',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 22,
+                        fontWeight: FontWeight.w700,
+                      ))),
             ),
           )
         ],
