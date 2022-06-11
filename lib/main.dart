@@ -23,6 +23,8 @@ class MyApp extends StatelessWidget {
   }
 }
 
+enum Screen { pasteText, upload }
+
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key, required this.title}) : super(key: key);
 
@@ -34,11 +36,168 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   int _initialIndex = 0;
+  Screen selectedScreen = Screen.upload;
 
   late AnimationController controller;
 
   Color color1 = Colors.white;
   Color color2 = const Color.fromRGBO(72, 62, 168, 1);
+
+  Widget getCurrentScreen() {
+    switch (selectedScreen) {
+      case Screen.pasteText:
+        return getPasteTextScreen();
+      case Screen.upload:
+        return getUploadScreen();
+    }
+  }
+
+  Widget getUploadScreen() {
+    return Column(
+      children: <Widget>[
+        Padding(
+          padding: EdgeInsets.only(
+            left: MediaQuery.of(context).size.width * 0.14,
+            bottom: MediaQuery.of(context).size.height * 0.009,
+          ),
+          child: const Align(
+            alignment: Alignment.centerLeft,
+            child: Text("123"),
+          ),
+        )
+      ],
+    );
+  }
+
+  Widget getPasteTextScreen() {
+    return Column(
+      children: <Widget>[
+        Padding(
+          padding: EdgeInsets.only(
+            left: MediaQuery.of(context).size.width * 0.14,
+            bottom: MediaQuery.of(context).size.height * 0.009,
+          ),
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: RichText(
+              textAlign: TextAlign.left,
+              text: const TextSpan(children: <TextSpan>[
+                TextSpan(
+                  text: "Input text",
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 20,
+                    color: Color.fromRGBO(9, 16, 29, 0.8),
+                  ),
+                ),
+                TextSpan(
+                  text: "*",
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 20,
+                    color: Color.fromRGBO(225, 67, 67, 1),
+                  ),
+                ),
+              ]),
+            ),
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.fromLTRB(
+            MediaQuery.of(context).size.width * 0.12,
+            0,
+            MediaQuery.of(context).size.width * 0.12,
+            MediaQuery.of(context).size.width * 0.15,
+          ),
+          child: SizedBox(
+            height: 200,
+            child: TextField(
+                maxLines: 10,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderSide:
+                        const BorderSide(color: Color.fromRGBO(56, 78, 183, 1)),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide:
+                        const BorderSide(color: Color.fromRGBO(72, 62, 168, 1)),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  hintText: 'Input your text here',
+                  prefixText: ' ',
+                )),
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.only(
+            left: MediaQuery.of(context).size.width * 0.12,
+            bottom: MediaQuery.of(context).size.height * 0.0236,
+          ),
+          child: const Align(
+            alignment: Alignment.centerLeft,
+            child: Text('Parsing...',
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w700,
+                  color: Color.fromRGBO(103, 103, 103, 1),
+                )),
+          ),
+        ),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(1000),
+          child: SizedBox(
+            width: 320,
+            child: LinearProgressIndicator(
+              minHeight: 22,
+              backgroundColor: const Color.fromRGBO(190, 200, 236, 1),
+              valueColor: const AlwaysStoppedAnimation<Color>(
+                  Color.fromRGBO(72, 62, 168, 1)),
+              value: controller.value,
+              semanticsLabel: 'parsing indicator',
+            ),
+          ),
+        ),
+        const Text('76% completed',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w500,
+              color: Color.fromRGBO(72, 62, 168, 0.5),
+            )),
+        Padding(
+          padding:
+              EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.1),
+          child: SizedBox(
+            width: MediaQuery.of(context).size.width * 0.9,
+            height: MediaQuery.of(context).size.height * 0.06,
+            child: ElevatedButton(
+                onPressed: () {},
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.resolveWith<Color?>(
+                    (Set<MaterialState> states) {
+                      if (states.contains(MaterialState.pressed)) {
+                        return const Color.fromRGBO(72, 62, 168, 0.5);
+                      }
+                      return const Color.fromRGBO(72, 62, 168, 1);
+                    },
+                  ),
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4.0),
+                    ),
+                  ),
+                ),
+                child: const Text('START MEMORIZE',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 22,
+                      fontWeight: FontWeight.w700,
+                    ))),
+          ),
+        )
+      ],
+    );
+  }
 
   @override
   void initState() {
@@ -108,9 +267,13 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 setState(() {
                   _initialIndex = index!;
                   if (index == 1) {
+                    selectedScreen = Screen.upload;
+
                     color1 = const Color.fromRGBO(72, 62, 168, 1);
                     color2 = Colors.white;
                   } else if (index == 0) {
+                    selectedScreen = Screen.pasteText;
+
                     color1 = Colors.white;
                     color2 = const Color.fromRGBO(72, 62, 168, 1);
                   }
@@ -118,129 +281,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
               },
             ),
           ),
-          Padding(
-            padding: EdgeInsets.only(
-              left: MediaQuery.of(context).size.width * 0.14,
-              bottom: MediaQuery.of(context).size.height * 0.009,
-            ),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: RichText(
-                textAlign: TextAlign.left,
-                text: const TextSpan(children: <TextSpan>[
-                  TextSpan(
-                    text: "Input text",
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 20,
-                      color: Color.fromRGBO(9, 16, 29, 0.8),
-                    ),
-                  ),
-                  TextSpan(
-                    text: "*",
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 20,
-                      color: Color.fromRGBO(225, 67, 67, 1),
-                    ),
-                  ),
-                ]),
-              ),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.fromLTRB(
-              MediaQuery.of(context).size.width * 0.12,
-              0,
-              MediaQuery.of(context).size.width * 0.12,
-              MediaQuery.of(context).size.width * 0.15,
-            ),
-            child: SizedBox(
-              height: 200,
-              child: TextField(
-                  maxLines: 10,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderSide: const BorderSide(
-                          color: Color.fromRGBO(56, 78, 183, 1)),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(
-                          color: Color.fromRGBO(72, 62, 168, 1)),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    hintText: 'Input your text here',
-                    prefixText: ' ',
-                  )),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(
-              left: MediaQuery.of(context).size.width * 0.12,
-              bottom: MediaQuery.of(context).size.height * 0.0236,
-            ),
-            child: const Align(
-              alignment: Alignment.centerLeft,
-              child: Text('Parsing...',
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w700,
-                    color: Color.fromRGBO(103, 103, 103, 1),
-                  )),
-            ),
-          ),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(1000),
-            child: SizedBox(
-              width: 320,
-              child: LinearProgressIndicator(
-                minHeight: 22,
-                backgroundColor: const Color.fromRGBO(190, 200, 236, 1),
-                valueColor: const AlwaysStoppedAnimation<Color>(
-                    Color.fromRGBO(72, 62, 168, 1)),
-                value: controller.value,
-                semanticsLabel: 'parsing indicator',
-              ),
-            ),
-          ),
-          const Text('76% completed',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w500,
-                color: Color.fromRGBO(72, 62, 168, 0.5),
-              )),
-          Padding(
-            padding:
-                EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.1),
-            child: SizedBox(
-              width: MediaQuery.of(context).size.width * 0.9,
-              height: MediaQuery.of(context).size.height * 0.06,
-              child: ElevatedButton(
-                  onPressed: () {},
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.resolveWith<Color?>(
-                      (Set<MaterialState> states) {
-                        if (states.contains(MaterialState.pressed)) {
-                          return const Color.fromRGBO(72, 62, 168, 0.5);
-                        }
-                        return const Color.fromRGBO(72, 62, 168, 1);
-                      },
-                    ),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(4.0),
-                      ),
-                    ),
-                  ),
-                  child: const Text('START MEMORIZE',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 22,
-                        fontWeight: FontWeight.w700,
-                      ))),
-            ),
-          )
+
+          getCurrentScreen(),
         ],
       ),
     );
