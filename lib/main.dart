@@ -18,6 +18,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Upload',
       theme: ThemeData(
+        primaryColor: CustomColors.primary,
         scaffoldBackgroundColor: Colors.white,
         textTheme: GoogleFonts.mulishTextTheme(),
       ),
