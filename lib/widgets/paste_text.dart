@@ -1,6 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:memorizer/widgets/memorize.dart';
 
+import '/../utils/sentences_parser.dart';
 import '/../common/theme.dart';
 
 Widget getPasteTextScreen(context, textController, animationController) {
@@ -104,7 +105,14 @@ Widget getPasteTextScreen(context, textController, animationController) {
           width: MediaQuery.of(context).size.width * 0.9,
           height: MediaQuery.of(context).size.height * 0.06,
           child: ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => MemorizeScreen(
+                          title: 'Memorize', sentences: textController.text)),
+                );
+              },
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.resolveWith<Color?>(
                   (Set<MaterialState> states) {
