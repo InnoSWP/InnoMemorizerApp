@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:toggle_switch/toggle_switch.dart';
-import 'package:memorizer/widgets/paste_text.dart';
-import 'package:memorizer/widgets/upload.dart';
-
-import 'common/theme.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,131 +12,269 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Upload',
+      title: 'Memorize',
       theme: ThemeData(
         scaffoldBackgroundColor: Colors.white,
         textTheme: GoogleFonts.mulishTextTheme(),
       ),
-      home: const MyHomePage(title: 'Upload'),
-      debugShowCheckedModeBanner: false,
-    );
-  }
-}
-
-enum Screen { pasteText, upload }
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
-  int _initialIndex = 0;
-  Screen selectedScreen = Screen.pasteText;
-
-  late AnimationController animationController;
-  final textController = TextEditingController();
-
-  Color color1 = Colors.white;
-  Color color2 = CustomColors.primary;
-
-  Widget getCurrentScreen(context) {
-    switch (selectedScreen) {
-      case Screen.pasteText:
-        return getPasteTextScreen(context, textController, animationController);
-      case Screen.upload:
-        return getUploadScreen(context);
-    }
-  }
-
-  @override
-  void initState() {
-    animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 5),
-    )..addListener(() {
-        setState(() {});
-      });
-    animationController.repeat(reverse: true);
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    animationController.dispose();
-    textController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: null,
-      body: Column(
-        children: <Widget>[
-          Padding(
-            padding: EdgeInsets.fromLTRB(
-              0,
-              MediaQuery.of(context).size.width * 0.15,
-              0,
-              MediaQuery.of(context).size.width * 0.1,
+      home: Scaffold(
+        appBar: null,
+        body: Column(
+          children: <Widget>[
+            Container(
+              padding: EdgeInsets.fromLTRB(0, 70, 0, 15),
+              child: Row(
+                children: [
+                  Container(
+                    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                    child: IconButton(iconSize: 40,
+                      icon: Icon(
+                        Icons.arrow_back,
+                        color: Colors.black,
+                      ),
+                      onPressed: () {
+                      },
+                    ),
+                  ),
+                  Expanded(
+                    /*1*/
+                    child: const Text(
+                      'All star song',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 28,
+                        color: Color.fromRGBO(72, 62, 168, 1),
+                      ),
+                    ),
+                  ),
+                  /*3*/
+                  Container(
+                    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                    child: IconButton(iconSize: 30,
+                      icon: Icon(
+                        Icons.settings,
+                        color: Colors.black,
+                      ),
+                      onPressed: () {
+                      },
+                    ),
+                  )
+                ],
+              ),
             ),
-            child: ToggleSwitch(
-              minWidth: MediaQuery.of(context).size.width * 0.34,
-              minHeight: MediaQuery.of(context).size.height * 0.04,
-              cornerRadius: 40.0,
-              customTextStyles: [
-                TextStyle(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 22,
-                  color: color1,
+            Container(
+              padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Color.fromRGBO(56, 78, 183, 1),
+                    width: 1,
+                  ),
+                  borderRadius: BorderRadius.circular(8),
                 ),
-                TextStyle(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 22,
-                  color: color2,
+                child: Column(
+                  children: <Widget>[
+
+
+                    Container(
+                      padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                            child: const Text(
+                              '1',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 22,
+                                color: Color.fromRGBO(0, 0, 0, 0.5),
+                              ),
+                            ),
+                          ),
+                          Flexible(
+                            child: const Text(
+                              'Somebody once told me the world is gonna roll me',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 28,
+                                  color: Color.fromRGBO(115, 129, 255, 1),
+                                  fontFamily: 'RobotoMono'
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+
+
+                    Container(
+                      padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                            child: const Text(
+                              '2',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 24,
+                                color: Color.fromRGBO(0, 0, 0, 0.75),
+                              ),
+                            ),
+                          ),
+                          Flexible(
+                            child: const Text(
+                              'I ain\'t the sharpest tool in the shed',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 36,
+                                  color: Color.fromRGBO(34, 56, 255, 1),
+                                  fontFamily: 'RobotoMono'
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+
+
+                    Container(
+                      padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                            child: const Text(
+                              '3',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 22,
+                                color: Color.fromRGBO(0, 0, 0, 0.5),
+                              ),
+                            ),
+                          ),
+                          Flexible(
+                            child: const Text(
+                              'She was looking kind of dumb with her finger and her thumb',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 28,
+                                  color: Color.fromRGBO(115, 129, 255, 1),
+                                  fontFamily: 'RobotoMono'
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+
+
+
+                    Container(
+                      padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Container(
+                              padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                              child: const Text(
+                                '2/306 complete',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 24,
+                                  color: Color.fromRGBO(0, 0, 0, 0.5),
+                                ),
+                              ),
+                            )
+                          ),
+                          Container(
+                            padding: EdgeInsets.fromLTRB(0, 0, 10, 10),
+                            child: Column(
+                              children: [
+                                Container(
+                                  child: IconButton(iconSize: 40,
+                                    icon: Icon(
+                                      Icons.refresh,
+                                      color: Colors.black,
+                                    ),
+                                    onPressed: () {
+                                    },
+                                  ),
+                                ),
+                                Container(
+                                  child: const Text(
+                                    'Repeat',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 22,
+                                      color: Color.fromRGBO(0, 0, 0, 0.5),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            )
+                          )
+                        ],
+                      ),
+                    ),
+
+
+
+                  ],
                 ),
-              ],
-              activeBgColors: const [
-                [CustomColors.primary],
-                [CustomColors.primary]
-              ],
-              activeFgColor: Colors.white,
-              fontSize: 22,
-              inactiveBgColor: CustomColors.background,
-              inactiveFgColor: CustomColors.primary,
-              initialLabelIndex: _initialIndex,
-              totalSwitches: 2,
-              borderColor: const [
-                CustomColors.whiteBorder,
-                CustomColors.whiteBorder
-              ],
-              borderWidth: 0.5,
-              labels: const ['Paste text', 'Upload'],
-              radiusStyle: true,
-              onToggle: (index) {
-                setState(() {
-                  _initialIndex = index!;
-                  if (index == 0) {
-                    selectedScreen = Screen.pasteText;
-                    color1 = Colors.white;
-                    color2 = CustomColors.primary;
-                  } else if (index == 1) {
-                    selectedScreen = Screen.upload;
-                    color1 = CustomColors.primary;
-                    color2 = Colors.white;
-                  }
-                });
-              },
+              ),
             ),
-          ),
-          getCurrentScreen(context),
-        ],
+
+
+            Container(
+              padding: EdgeInsets.fromLTRB(100, 50, 0, 0),
+              child: Row(
+                children: [
+                  Ink(
+                    decoration: const ShapeDecoration(
+                      color: Color.fromRGBO(72, 62, 168, 1),
+                      shape: CircleBorder(),
+                    ),
+                    child: IconButton(
+                      icon: const Icon(Icons.fast_rewind_outlined),
+                      color: Colors.white,
+                      onPressed: () {},
+                      iconSize: 50,
+                    ),
+                  ),
+
+                  Ink(
+                    decoration: const ShapeDecoration(
+                      color: Color.fromRGBO(72, 62, 168, 1),
+                      shape: CircleBorder(),
+                    ),
+                    child: IconButton(
+                      icon: const Icon(Icons.play_arrow),
+                      color: Colors.white,
+                      onPressed: () {},
+                      iconSize: 50,
+                    ),
+                  ),
+
+                  Ink(
+                    decoration: const ShapeDecoration(
+                      color: Color.fromRGBO(72, 62, 168, 1),
+                      shape: CircleBorder(),
+                    ),
+                    child: IconButton(
+                      icon: const Icon(Icons.fast_forward_outlined),
+                      color: Colors.white,
+                      onPressed: () {},
+                      iconSize: 50,
+                    ),
+                  ),
+                ],
+              )
+            )
+          ],
+        ),
       ),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
