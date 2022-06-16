@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:toggle_switch/toggle_switch.dart';
+import 'package:memorizer/widgets/paste_text.dart';
+import 'package:memorizer/widgets/upload.dart';
+
+import 'common/theme.dart';
 
 void main() {
   runApp(const MyApp());
@@ -36,184 +40,39 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   int _initialIndex = 0;
-  Screen selectedScreen = Screen.upload;
+  Screen selectedScreen = Screen.pasteText;
 
-  late AnimationController controller;
+  late AnimationController animationController;
+  final textController = TextEditingController();
 
   Color color1 = Colors.white;
-  Color color2 = const Color.fromRGBO(72, 62, 168, 1);
+  Color color2 = CustomColors.primary;
 
-  Widget getCurrentScreen() {
+  Widget getCurrentScreen(context) {
     switch (selectedScreen) {
       case Screen.pasteText:
-        return getPasteTextScreen();
+        return getPasteTextScreen(context, textController, animationController);
       case Screen.upload:
-        return getUploadScreen();
+        return getUploadScreen(context);
     }
-  }
-
-  Widget getUploadScreen() {
-    return Column(
-      children: <Widget>[
-        Padding(
-          padding: EdgeInsets.only(
-            left: MediaQuery.of(context).size.width * 0.14,
-            bottom: MediaQuery.of(context).size.height * 0.009,
-          ),
-          child: const Align(
-            alignment: Alignment.centerLeft,
-            child: Text("123"),
-          ),
-        )
-      ],
-    );
-  }
-
-  Widget getPasteTextScreen() {
-    return Column(
-      children: <Widget>[
-        Padding(
-          padding: EdgeInsets.only(
-            left: MediaQuery.of(context).size.width * 0.14,
-            bottom: MediaQuery.of(context).size.height * 0.009,
-          ),
-          child: Align(
-            alignment: Alignment.centerLeft,
-            child: RichText(
-              textAlign: TextAlign.left,
-              text: const TextSpan(children: <TextSpan>[
-                TextSpan(
-                  text: "Input text",
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 20,
-                    color: Color.fromRGBO(9, 16, 29, 0.8),
-                  ),
-                ),
-                TextSpan(
-                  text: "*",
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 20,
-                    color: Color.fromRGBO(225, 67, 67, 1),
-                  ),
-                ),
-              ]),
-            ),
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.fromLTRB(
-            MediaQuery.of(context).size.width * 0.12,
-            0,
-            MediaQuery.of(context).size.width * 0.12,
-            MediaQuery.of(context).size.width * 0.15,
-          ),
-          child: SizedBox(
-            height: 200,
-            child: TextField(
-                maxLines: 10,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderSide:
-                        const BorderSide(color: Color.fromRGBO(56, 78, 183, 1)),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide:
-                        const BorderSide(color: Color.fromRGBO(72, 62, 168, 1)),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  hintText: 'Input your text here',
-                  prefixText: ' ',
-                )),
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.only(
-            left: MediaQuery.of(context).size.width * 0.12,
-            bottom: MediaQuery.of(context).size.height * 0.0236,
-          ),
-          child: const Align(
-            alignment: Alignment.centerLeft,
-            child: Text('Parsing...',
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.w700,
-                  color: Color.fromRGBO(103, 103, 103, 1),
-                )),
-          ),
-        ),
-        ClipRRect(
-          borderRadius: BorderRadius.circular(1000),
-          child: SizedBox(
-            width: 320,
-            child: LinearProgressIndicator(
-              minHeight: 22,
-              backgroundColor: const Color.fromRGBO(190, 200, 236, 1),
-              valueColor: const AlwaysStoppedAnimation<Color>(
-                  Color.fromRGBO(72, 62, 168, 1)),
-              value: controller.value,
-              semanticsLabel: 'parsing indicator',
-            ),
-          ),
-        ),
-        const Text('76% completed',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w500,
-              color: Color.fromRGBO(72, 62, 168, 0.5),
-            )),
-        Padding(
-          padding:
-              EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.1),
-          child: SizedBox(
-            width: MediaQuery.of(context).size.width * 0.9,
-            height: MediaQuery.of(context).size.height * 0.06,
-            child: ElevatedButton(
-                onPressed: () {},
-                style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.resolveWith<Color?>(
-                    (Set<MaterialState> states) {
-                      if (states.contains(MaterialState.pressed)) {
-                        return const Color.fromRGBO(72, 62, 168, 0.5);
-                      }
-                      return const Color.fromRGBO(72, 62, 168, 1);
-                    },
-                  ),
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(4.0),
-                    ),
-                  ),
-                ),
-                child: const Text('START MEMORIZE',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 22,
-                      fontWeight: FontWeight.w700,
-                    ))),
-          ),
-        )
-      ],
-    );
   }
 
   @override
   void initState() {
-    controller = AnimationController(
+    animationController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 5),
     )..addListener(() {
         setState(() {});
       });
-    controller.repeat(reverse: true);
+    animationController.repeat(reverse: true);
     super.initState();
   }
 
   @override
   void dispose() {
-    controller.dispose();
+    animationController.dispose();
+    textController.dispose();
     super.dispose();
   }
 
@@ -247,18 +106,18 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 ),
               ],
               activeBgColors: const [
-                [Color.fromRGBO(72, 62, 168, 1)],
-                [Color.fromRGBO(72, 62, 168, 1)]
+                [CustomColors.primary],
+                [CustomColors.primary]
               ],
               activeFgColor: Colors.white,
               fontSize: 22,
-              inactiveBgColor: const Color.fromRGBO(247, 249, 251, 1),
-              inactiveFgColor: const Color.fromRGBO(72, 62, 168, 1),
+              inactiveBgColor: CustomColors.background,
+              inactiveFgColor: CustomColors.primary,
               initialLabelIndex: _initialIndex,
               totalSwitches: 2,
               borderColor: const [
-                Color.fromRGBO(237, 239, 241, 1),
-                Color.fromRGBO(237, 239, 241, 1)
+                CustomColors.whiteBorder,
+                CustomColors.whiteBorder
               ],
               borderWidth: 0.5,
               labels: const ['Paste text', 'Upload'],
@@ -266,23 +125,20 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
               onToggle: (index) {
                 setState(() {
                   _initialIndex = index!;
-                  if (index == 1) {
-                    selectedScreen = Screen.upload;
-
-                    color1 = const Color.fromRGBO(72, 62, 168, 1);
-                    color2 = Colors.white;
-                  } else if (index == 0) {
+                  if (index == 0) {
                     selectedScreen = Screen.pasteText;
-
                     color1 = Colors.white;
-                    color2 = const Color.fromRGBO(72, 62, 168, 1);
+                    color2 = CustomColors.primary;
+                  } else if (index == 1) {
+                    selectedScreen = Screen.upload;
+                    color1 = CustomColors.primary;
+                    color2 = Colors.white;
                   }
                 });
               },
             ),
           ),
-
-          getCurrentScreen(),
+          getCurrentScreen(context),
         ],
       ),
     );
