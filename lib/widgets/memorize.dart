@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:alan_voice/alan_voice.dart';
 import '../common/theme.dart';
 
 class MemorizeScreen extends StatefulWidget {
@@ -13,6 +14,17 @@ class MemorizeScreen extends StatefulWidget {
 }
 
 class Memorize extends State<MemorizeScreen> {
+
+  Memorize() {
+    /// Init Alan Button with project key from Alan Studio
+    AlanVoice.addButton("4bcdc8339b280a7d4af44a9cc1b6f2cb2e956eca572e1d8b807a3e2338fdd0dc/stage");
+
+    /// Handle commands from Alan Studio
+    AlanVoice.onCommand.add((command) {
+      debugPrint("got new command ${command.toString()}");
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -201,6 +213,7 @@ class Memorize extends State<MemorizeScreen> {
               ),
             ),
           ),
+
           Container(
               padding: const EdgeInsets.fromLTRB(0, 50, 0, 0),
               child: Row(
