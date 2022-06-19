@@ -14,6 +14,7 @@ class MemorizeScreen extends StatefulWidget {
 }
 
 class Memorize extends State<MemorizeScreen> {
+  int _currentIndex = 0;
 
   Memorize() {
     /// Init Alan Button with project key from Alan Studio
@@ -129,7 +130,7 @@ class Memorize extends State<MemorizeScreen> {
                         ),
                         Flexible(
                           child: Text(
-                            widget.sentences[0]!,
+                            widget.sentences[_currentIndex]!,
                             style: const TextStyle(
                                 fontWeight: FontWeight.w400,
                                 fontSize: 36,
@@ -228,7 +229,13 @@ class Memorize extends State<MemorizeScreen> {
                     child: IconButton(
                       icon: const Icon(Icons.fast_rewind_outlined),
                       color: Colors.white,
-                      onPressed: () {},
+                      onPressed: () {
+                        setState(() {
+                          if (_currentIndex > 0) {
+                            --_currentIndex;
+                          }
+                        });
+                      },
                       iconSize: 50,
                     ),
                   ),
@@ -252,7 +259,13 @@ class Memorize extends State<MemorizeScreen> {
                     child: IconButton(
                       icon: const Icon(Icons.fast_forward_outlined),
                       color: Colors.white,
-                      onPressed: () {},
+                      onPressed: () {
+                        setState(() {
+                          if (_currentIndex < widget.sentences.length) {
+                            ++_currentIndex;
+                          }
+                        });
+                      },
                       iconSize: 50,
                     ),
                   ),
