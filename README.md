@@ -8,4 +8,4 @@ Also it is possible to paste text by yourself. For that option it is needed to c
 ## Memorizing page
 The memorizing page shows title of the text and three sentences: previous, current, and next for convenient navigation. Using buttons on the bottom it is possible to sound current sentence several time, go back to the previous one, and go further by one sentence. [memorizing page](https://ibb.co/59fDkwt)
 ## APK
-[APK link](https://drive.google.com/file/d/1T5qgkQhbPXzwic0VGni6t6SpbvMTKi_t/view?usp=sharing)
+[APK link](https://drive.google.com/file/d/1gQhFsDyF1SqEsiEaE_7nbXWC5Nq9FHFN/view?usp=sharing)
