@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:alan_voice/alan_voice.dart';
 import '../common/theme.dart';
 
 class MemorizeScreen extends StatefulWidget {
@@ -6,13 +7,24 @@ class MemorizeScreen extends StatefulWidget {
       : super(key: key);
 
   final String title;
-  final String sentences;
+  final List<String?> sentences;
 
   @override
   State<StatefulWidget> createState() => Memorize();
 }
 
 class Memorize extends State<MemorizeScreen> {
+
+  Memorize() {
+    /// Init Alan Button with project key from Alan Studio
+    AlanVoice.addButton("4bcdc8339b280a7d4af44a9cc1b6f2cb2e956eca572e1d8b807a3e2338fdd0dc/stage");
+
+    /// Handle commands from Alan Studio
+    AlanVoice.onCommand.add((command) {
+      debugPrint("got new command ${command.toString()}");
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -139,7 +151,7 @@ class Memorize extends State<MemorizeScreen> {
                         ),
                         Flexible(
                           child: Text(
-                            widget.sentences,
+                            widget.sentences[0]!,
                             style: const TextStyle(
                                 fontWeight: FontWeight.w400,
                                 fontSize: 36,
@@ -223,9 +235,12 @@ class Memorize extends State<MemorizeScreen> {
               ),
             ),
           ),
+
           Container(
-              padding: const EdgeInsets.fromLTRB(100, 50, 0, 0),
+              padding: const EdgeInsets.fromLTRB(0, 50, 0, 0),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Ink(
                     decoration: const ShapeDecoration(
