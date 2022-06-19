@@ -29,50 +29,72 @@ class Memorize extends State<MemorizeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: null,
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: CustomColors.background,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back,
+              color: CustomColors.greyText, size: 40),
+          onPressed: () {},
+        ),
+        title: const Text('All start song',
+            style: TextStyle(
+                color: CustomColors.primary,
+                fontWeight: FontWeight.w700,
+                fontSize: 28)),
+        actions: [
+          IconButton(
+              onPressed: () {},
+              icon: const Icon(
+                Icons.settings,
+                color: CustomColors.greyText,
+                size: 40,
+              ))
+        ],
+      ),
       body: Column(
         children: <Widget>[
-          Container(
-            padding: const EdgeInsets.fromLTRB(0, 70, 0, 15),
-            child: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                  child: IconButton(
-                    iconSize: 40,
-                    icon: const Icon(
-                      Icons.arrow_back,
-                      color: Colors.black,
-                    ),
-                    onPressed: () {},
-                  ),
-                ),
-                Expanded(
-                  /*1*/
-                  child: Text(
-                    widget.title,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 28,
-                      color: CustomColors.primary,
-                    ),
-                  ),
-                ),
-                /*3*/
-                Container(
-                  padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                  child: IconButton(
-                    iconSize: 30,
-                    icon: const Icon(
-                      Icons.settings,
-                      color: Colors.black,
-                    ),
-                    onPressed: () {},
-                  ),
-                )
-              ],
-            ),
-          ),
+          // Container(
+          //   padding: const EdgeInsets.fromLTRB(0, 70, 0, 15),
+          //   child: Row(
+          //     children: [
+          //       Container(
+          //         padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+          //         child: IconButton(
+          //           iconSize: 40,
+          //           icon: const Icon(
+          //             Icons.arrow_back,
+          //             color: Colors.black,
+          //           ),
+          //           onPressed: () {},
+          //         ),
+          //       ),
+          //       Expanded(
+          //         /*1*/
+          //         child: Text(
+          //           widget.title,
+          //           style: const TextStyle(
+          //             fontWeight: FontWeight.w700,
+          //             fontSize: 28,
+          //             color: CustomColors.primary,
+          //           ),
+          //         ),
+          //       ),
+          //       /*3*/
+          //       Container(
+          //         padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+          //         child: IconButton(
+          //           iconSize: 30,
+          //           icon: const Icon(
+          //             Icons.settings,
+          //             color: Colors.black,
+          //           ),
+          //           onPressed: () {},
+          //         ),
+          //       )
+          //     ],
+          //   ),
+          // ),
           Container(
             padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
             child: Container(
