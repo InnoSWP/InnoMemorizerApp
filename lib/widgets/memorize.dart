@@ -37,7 +37,9 @@ class Memorize extends State<MemorizeScreen> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back,
               color: CustomColors.greyText, size: 40),
-          onPressed: () {},
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
         ),
         title: const Text('All start song',
             style: TextStyle(
