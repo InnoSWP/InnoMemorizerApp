@@ -14,3 +14,9 @@ Future<String> fetchSentences(String text) async {
     return e.toString();
   }
 }
+
+List<String?> fetchSentencesMock(String text) {
+  RegExp re = RegExp(r"(\w|\s|,|')+[。.?!]*\s*");
+  var sentences = re.allMatches(text).map((m) => m.group(0)).toList();
+  return sentences;
+}

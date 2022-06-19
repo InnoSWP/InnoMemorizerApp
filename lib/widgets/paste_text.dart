@@ -110,7 +110,8 @@ Widget getPasteTextScreen(context, textController, animationController) {
                   context,
                   MaterialPageRoute(
                       builder: (context) => MemorizeScreen(
-                          title: 'Memorize', sentences: textController.text)),
+                          title: 'Memorize',
+                          sentences: fetchSentencesMock(textController.value))),
                 );
               },
               style: ButtonStyle(

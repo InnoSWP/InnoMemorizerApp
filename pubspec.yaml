@@ -35,8 +35,11 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   google_fonts: ^3.0.1
+  file_picker: ^4.6.1
   toggle_switch: ^2.0.1
+  dotted_border: ^2.0.0+2
   dio: ^4.0.6
+  pdf_text: ^0.5.0
 
 dev_dependencies:
   flutter_test:
@@ -55,6 +58,7 @@ dev_dependencies:
 # The following section is specific to Flutter packages.
 flutter:
   assets:
+    - assets/images/upload.png
     - fonts/
 
   # The following line ensures that the Material Icons font is

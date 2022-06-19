@@ -6,7 +6,7 @@ class MemorizeScreen extends StatefulWidget {
       : super(key: key);
 
   final String title;
-  final String sentences;
+  final List<String?> sentences;
 
   @override
   State<StatefulWidget> createState() => Memorize();
@@ -117,7 +117,7 @@ class Memorize extends State<MemorizeScreen> {
                         ),
                         Flexible(
                           child: Text(
-                            widget.sentences,
+                            widget.sentences[0]!,
                             style: const TextStyle(
                                 fontWeight: FontWeight.w400,
                                 fontSize: 36,
@@ -202,8 +202,10 @@ class Memorize extends State<MemorizeScreen> {
             ),
           ),
           Container(
-              padding: const EdgeInsets.fromLTRB(100, 50, 0, 0),
+              padding: const EdgeInsets.fromLTRB(0, 50, 0, 0),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Ink(
                     decoration: const ShapeDecoration(
