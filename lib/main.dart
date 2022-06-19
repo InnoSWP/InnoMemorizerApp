@@ -91,15 +91,17 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   }
 
   void _sendText() async {
-    _fetchPDF().then((value) => {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => MemorizeScreen(
-                  title: 'Memorize', sentences: fetchSentencesMock(_pdfText!)),
-            ),
-          )
-        });
+    await _fetchPDF();
+    var sentences = await fetchSentences(_pdfText!);
+    setState(() {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) =>
+              MemorizeScreen(title: 'Memorize', sentences: sentences),
+        ),
+      );
+    });
   }
 
   Widget getUploadScreen() {
@@ -287,7 +289,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
 
     fileAnimationController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 10),
+      duration: const Duration(seconds: 6),
     )..addListener(() {
         setState(() {});
       });
