@@ -1,5 +1,6 @@
 # InnoMemorizerApp
 IMP - an innovative open source application that will help people memorize text more easily 
+[![GitHub Super-Linter](https://github.com/InnoSWP/InnoMemorizerApp/workflows/Lint%20Code%20Base/badge.svg)](https://github.com/marketplace/actions/super-linter)
 ## Home page
 ### Upload page
 Home page provides opportunity to choose one of two options to share certain text for the memorizing process with the app: it is possible to do it through the uploading text with clicking on the right top button with the word `Upload` then go to the square with the title `browse files` click on it and eventually upload the text on PDF format. Push `Start memorize` and enjoy the process. [upload page]([https://ibb.co/s125LfX](https://ibb.co/s125LfX)) 
