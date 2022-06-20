@@ -5,6 +5,7 @@ import '/../utils/sentences_parser.dart';
 import '/../common/theme.dart';
 
 Widget getPasteTextScreen(context, textController, animationController) {
+  int animValue = (animationController.value * 100).round();
   return SingleChildScrollView(
     child: Column(
       children: <Widget>[
@@ -66,41 +67,49 @@ Widget getPasteTextScreen(context, textController, animationController) {
                 )),
           ),
         ),
-        Padding(
-          padding: EdgeInsets.only(
-            left: MediaQuery.of(context).size.width * 0.12,
-            bottom: MediaQuery.of(context).size.height * 0.0236,
-          ),
-          child: const Align(
-            alignment: Alignment.centerLeft,
-            child: Text('Parsing...',
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.w700,
-                  color: CustomColors.greyText,
-                )),
-          ),
-        ),
-        ClipRRect(
-          borderRadius: BorderRadius.circular(1000),
-          child: SizedBox(
-            width: 320,
-            child: LinearProgressIndicator(
-              minHeight: 22,
-              backgroundColor: const Color.fromRGBO(190, 200, 236, 1),
-              valueColor:
-                  const AlwaysStoppedAnimation<Color>(CustomColors.primary),
-              value: animationController.value,
-              semanticsLabel: 'parsing indicator',
-            ),
-          ),
-        ),
-        Text('76% completed',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w500,
-              color: CustomColors.primary.withOpacity(0.5),
-            )),
+        animationController.value == 0.0
+            ? const SizedBox(
+                height: 10,
+              )
+            : Column(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(
+                      left: MediaQuery.of(context).size.width * 0.12,
+                      bottom: MediaQuery.of(context).size.height * 0.0236,
+                    ),
+                    child: const Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text('Parsing..',
+                          style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.w700,
+                            color: CustomColors.greyText,
+                          )),
+                    ),
+                  ),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(1000),
+                    child: SizedBox(
+                      width: 320,
+                      child: LinearProgressIndicator(
+                        minHeight: 22,
+                        backgroundColor: const Color.fromRGBO(190, 200, 236, 1),
+                        valueColor: const AlwaysStoppedAnimation<Color>(
+                            CustomColors.primary),
+                        value: animationController.value,
+                        semanticsLabel: 'parsing indicator',
+                      ),
+                    ),
+                  ),
+                  Text("$animValue% completed",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500,
+                        color: CustomColors.primary.withOpacity(0.5),
+                      )),
+                ],
+              ),
         Padding(
           padding:
               EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.1),
@@ -108,22 +117,28 @@ Widget getPasteTextScreen(context, textController, animationController) {
             width: MediaQuery.of(context).size.width * 0.9,
             height: MediaQuery.of(context).size.height * 0.06,
             child: ElevatedButton(
-                onPressed: () {
-                  fetchSentences(textController.text).then((sentences) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => MemorizeScreen(
-                            title: 'Memorize', sentences: sentences),
-                      ),
-                    );
-                  });
-                },
+                onPressed: textController.text.isNotEmpty
+                    ? () {
+                        fetchSentences(textController.text).then((sentences) {
+                          animationController.forward().whenComplete(() {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => MemorizeScreen(
+                                    title: 'Memorize', sentences: sentences),
+                              ),
+                            );
+                          });
+                        });
+                      }
+                    : null,
                 style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.resolveWith<Color?>(
                     (Set<MaterialState> states) {
                       if (states.contains(MaterialState.pressed)) {
                         return CustomColors.primary.withOpacity(0.5);
+                      } else if (states.contains(MaterialState.disabled)) {
+                        return CustomColors.primary.withOpacity(0.3);
                       }
                       return CustomColors.primary;
                     },

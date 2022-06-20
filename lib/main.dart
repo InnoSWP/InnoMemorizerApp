@@ -281,11 +281,10 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   void initState() {
     animationController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 5),
+      duration: const Duration(seconds: 3),
     )..addListener(() {
         setState(() {});
       });
-    animationController.repeat(reverse: true);
 
     fileAnimationController = AnimationController(
       vsync: this,
