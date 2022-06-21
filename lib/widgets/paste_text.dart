@@ -5,7 +5,6 @@ import '/../utils/sentences_parser.dart';
 import '/../common/theme.dart';
 
 Widget getPasteTextScreen(context, textController, animationController) {
-  int animValue = (animationController.value * 100).round();
   return SingleChildScrollView(
     child: Column(
       children: <Widget>[
@@ -102,7 +101,8 @@ Widget getPasteTextScreen(context, textController, animationController) {
                       ),
                     ),
                   ),
-                  Text("$animValue% completed",
+                  Text(
+                      "${(animationController.value * 100).round()}% completed",
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w500,
@@ -119,16 +119,21 @@ Widget getPasteTextScreen(context, textController, animationController) {
             child: ElevatedButton(
                 onPressed: textController.text.isNotEmpty
                     ? () {
+                        animationController.forward();
                         fetchSentences(textController.text).then((sentences) {
-                          animationController.forward().whenComplete(() {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => MemorizeScreen(
-                                    title: 'Memorize', sentences: sentences),
-                              ),
-                            );
-                          });
+                          while (animationController.status !=
+                              AnimationStatus.completed) {
+                            animationController.value += 0.01;
+                            Future.delayed(const Duration(milliseconds: 300));
+                          }
+                          animationController.reset();
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => MemorizeScreen(
+                                  title: 'Memorize', sentences: sentences),
+                            ),
+                          );
                         });
                       }
                     : null,
