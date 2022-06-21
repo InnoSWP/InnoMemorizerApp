@@ -5,6 +5,7 @@ import '/../utils/sentences_parser.dart';
 import '/../common/theme.dart';
 
 Widget getPasteTextScreen(context, textController, animationController) {
+
   return SingleChildScrollView(
     child: Column(
       children: <Widget>[
@@ -79,7 +80,7 @@ Widget getPasteTextScreen(context, textController, animationController) {
                     ),
                     child: const Align(
                       alignment: Alignment.centerLeft,
-                      child: Text('Parsing..',
+                      child: Text('Parsing...',
                           style: TextStyle(
                             fontSize: 22,
                             fontWeight: FontWeight.w700,
@@ -116,50 +117,58 @@ Widget getPasteTextScreen(context, textController, animationController) {
           child: SizedBox(
             width: MediaQuery.of(context).size.width * 0.9,
             height: MediaQuery.of(context).size.height * 0.06,
-            child: ElevatedButton(
-                onPressed: textController.text.isNotEmpty
-                    ? () {
-                        animationController.forward();
-                        fetchSentences(textController.text).then((sentences) {
-                          while (animationController.status !=
-                              AnimationStatus.completed) {
-                            animationController.value += 0.01;
-                            Future.delayed(const Duration(milliseconds: 300));
+            child: ValueListenableBuilder<TextEditingValue>(
+              valueListenable: textController,
+              builder: (context, value, child) {
+                return ElevatedButton(
+                    onPressed: value.text.isNotEmpty
+                        ? () {
+                            animationController.forward();
+                            fetchSentences(value.text)
+                                .then((sentences) {
+                              while (animationController.status !=
+                                  AnimationStatus.completed) {
+                                animationController.value += 0.01;
+                                Future.delayed(
+                                    const Duration(milliseconds: 200));
+                              }
+                              animationController.reset();
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => MemorizeScreen(
+                                      title: 'Memorize', sentences: sentences),
+                                ),
+                              );
+                            });
                           }
-                          animationController.reset();
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => MemorizeScreen(
-                                  title: 'Memorize', sentences: sentences),
-                            ),
-                          );
-                        });
-                      }
-                    : null,
-                style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.resolveWith<Color?>(
-                    (Set<MaterialState> states) {
-                      if (states.contains(MaterialState.pressed)) {
-                        return CustomColors.primary.withOpacity(0.5);
-                      } else if (states.contains(MaterialState.disabled)) {
-                        return CustomColors.primary.withOpacity(0.3);
-                      }
-                      return CustomColors.primary;
-                    },
-                  ),
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(4.0),
+                        : null,
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.resolveWith<Color?>(
+                        (Set<MaterialState> states) {
+                          if (states.contains(MaterialState.pressed)) {
+                            return CustomColors.primary.withOpacity(0.5);
+                          } else if (states.contains(MaterialState.disabled)) {
+                            return CustomColors.primary.withOpacity(0.3);
+                          }
+                          return CustomColors.primary;
+                        },
+                      ),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(4.0),
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-                child: const Text('START MEMORIZE',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 22,
-                      fontWeight: FontWeight.w700,
-                    ))),
+                    child: const Text('START MEMORIZE',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 22,
+                          fontWeight: FontWeight.w700,
+                        )));
+              },
+            ),
           ),
         )
       ],

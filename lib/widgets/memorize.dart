@@ -27,6 +27,117 @@ class Memorize extends State<MemorizeScreen> {
     });
   }
 
+  Widget getCurrentSentences() {
+    if (widget.sentences.length >= 3) {
+      if (_currentIndex == 0) {
+        return Column(
+            children: <Widget>[
+              getHighlightedSentence(_currentIndex),
+              getCasualSentence(_currentIndex + 1),
+              getCasualSentence(_currentIndex + 2),
+            ]
+        );
+      } else if (_currentIndex == widget.sentences.length - 1) {
+        return Column(
+            children: <Widget>[
+              getCasualSentence(_currentIndex - 2),
+              getCasualSentence(_currentIndex - 1),
+              getHighlightedSentence(_currentIndex),
+            ]
+        );
+      } else {
+        return Column(
+            children: <Widget>[
+              getCasualSentence(_currentIndex - 1),
+              getHighlightedSentence(_currentIndex),
+              getCasualSentence(_currentIndex + 1),
+            ]
+        );
+      }
+    } else if (widget.sentences.length == 2) {
+      if (_currentIndex == 0) {
+        return Column(
+            children: <Widget>[
+              getHighlightedSentence(_currentIndex),
+              getCasualSentence(_currentIndex + 1),
+            ]
+        );
+      } else {
+        return Column(
+            children: <Widget>[
+              getCasualSentence(_currentIndex - 1),
+              getHighlightedSentence(_currentIndex),
+            ]
+        );
+      }
+    }
+
+    return getHighlightedSentence(_currentIndex);
+  }
+
+
+  Widget getCasualSentence(int index) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+            child: Text(
+              '${index + 1}',
+              style: const TextStyle(
+                fontWeight: FontWeight.w500,
+                fontSize: 22,
+                color: Color.fromRGBO(0, 0, 0, 0.5),
+              ),
+            ),
+          ),
+          Flexible(
+            child: Text(
+              widget.sentences[index]!,
+              style: const TextStyle(
+                  fontWeight: FontWeight.w400,
+                  fontSize: 28,
+                  color: Color.fromRGBO(115, 129, 255, 1),
+                  fontFamily: 'RobotoMono'),
+            ),
+          )
+        ],
+      )
+    );
+  }
+
+  Widget getHighlightedSentence(int index) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+            child: Text(
+              '${index + 1}',
+              style: const TextStyle(
+                fontWeight: FontWeight.w500,
+                fontSize: 24,
+                color: Color.fromRGBO(0, 0, 0, 0.75),
+              ),
+            ),
+          ),
+          Flexible(
+            child: Text(
+              widget.sentences[index]!,
+              style: const TextStyle(
+                  fontWeight: FontWeight.w400,
+                  fontSize: 36,
+                  color: Color.fromRGBO(34, 56, 255, 1),
+                  fontFamily: 'RobotoMono'),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -41,7 +152,7 @@ class Memorize extends State<MemorizeScreen> {
             Navigator.of(context).pop();
           },
         ),
-        title: const Text('All start song',
+        title: const Text('Memorize',
             style: TextStyle(
                 color: CustomColors.primary,
                 fontWeight: FontWeight.w700,
@@ -60,7 +171,6 @@ class Memorize extends State<MemorizeScreen> {
         padding: const EdgeInsets.only(top: 40),
         child: Column(
           children: <Widget>[
-
             Container(
               padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
               child: Container(
@@ -73,90 +183,9 @@ class Memorize extends State<MemorizeScreen> {
                 ),
                 child: Column(
                   children: <Widget>[
-                    Container(
-                      padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
-                      child: Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                            child: const Text(
-                              '1',
-                              style: TextStyle(
-                                fontWeight: FontWeight.w500,
-                                fontSize: 22,
-                                color: Color.fromRGBO(0, 0, 0, 0.5),
-                              ),
-                            ),
-                          ),
-                          const Flexible(
-                            child: Text(
-                              'Somebody once told me the world is gonna roll me',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 28,
-                                  color: Color.fromRGBO(115, 129, 255, 1),
-                                  fontFamily: 'RobotoMono'),
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
-                      child: Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                            child: const Text(
-                              '2',
-                              style: TextStyle(
-                                fontWeight: FontWeight.w500,
-                                fontSize: 24,
-                                color: Color.fromRGBO(0, 0, 0, 0.75),
-                              ),
-                            ),
-                          ),
-                          Flexible(
-                            child: Text(
-                              widget.sentences[_currentIndex]!,
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 36,
-                                  color: Color.fromRGBO(34, 56, 255, 1),
-                                  fontFamily: 'RobotoMono'),
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
-                      child: Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                            child: const Text(
-                              '3',
-                              style: TextStyle(
-                                fontWeight: FontWeight.w500,
-                                fontSize: 22,
-                                color: Color.fromRGBO(0, 0, 0, 0.5),
-                              ),
-                            ),
-                          ),
-                          const Flexible(
-                            child: Text(
-                              'She was looking kind of dumb with her finger and her thumb',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 28,
-                                  color: Color.fromRGBO(115, 129, 255, 1),
-                                  fontFamily: 'RobotoMono'),
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
+
+                    getCurrentSentences(),
+
                     Container(
                       padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
                       child: Row(
@@ -164,9 +193,9 @@ class Memorize extends State<MemorizeScreen> {
                           Expanded(
                               child: Container(
                             padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                            child: const Text(
-                              '2/306 complete',
-                              style: TextStyle(
+                            child: Text(
+                              '${_currentIndex + 1}/${widget.sentences.length} complete',
+                              style: const TextStyle(
                                 fontWeight: FontWeight.w500,
                                 fontSize: 24,
                                 color: Color.fromRGBO(0, 0, 0, 0.5),

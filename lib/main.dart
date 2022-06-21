@@ -313,7 +313,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
           Padding(
             padding: EdgeInsets.fromLTRB(
               0,
-              MediaQuery.of(context).size.width * 0.01,
+              MediaQuery.of(context).size.width * 0.15,
               0,
               MediaQuery.of(context).size.width * 0.1,
             ),
