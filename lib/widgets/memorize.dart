@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:alan_voice/alan_voice.dart';
 import '../common/theme.dart';
+import 'dart:convert';
 
 class MemorizeScreen extends StatefulWidget {
   const MemorizeScreen({Key? key, required this.title, required this.sentences})
@@ -19,13 +20,84 @@ class Memorize extends State<MemorizeScreen> {
   Memorize() {
     /// Init Alan Button with project key from Alan Studio
     AlanVoice.addButton(
-        "4bcdc8339b280a7d4af44a9cc1b6f2cb2e956eca572e1d8b807a3e2338fdd0dc/stage");
+        "8118d5e4d24668be5a3c671a4e29cd092e956eca572e1d8b807a3e2338fdd0dc/stage");
 
     /// Handle commands from Alan Studio
     AlanVoice.onCommand.add((command) {
       debugPrint("got new command ${command.toString()}");
+
+      if (command.data["command"] == "finishedPlaying") {
+        //This will not fire if Alan is disabled
+
+        //Therefore we don't even need to check isPlayingNow
+        if (isPlayingNow && _currentIndex + 1 < widget.sentences.length) {
+          setState(() {
+            _currentIndex++;
+          });
+          playSentence();
+        }
+      }
     });
   }
+
+
+  bool isPlayingNow = false;
+  void onClickPlayPause() {
+    if (!isPlayingNow) {
+
+      AlanVoice.activate();
+      playSentence();
+
+      setState(() {
+        isPlayingNow = true;
+      });
+    } else {
+      AlanVoice.deactivate();
+
+      setState(() {
+        isPlayingNow = false;
+      });
+    }
+  }
+
+  void playSentence() {
+    //await AlanVoice.playText(widget.sentences[_currentIndex]!);
+    var params = jsonEncode({"text":widget.sentences[_currentIndex]!});
+    AlanVoice.callProjectApi("script::say", params);
+    //playSentence();
+  }
+
+  void onClickRewind() {
+    setState(() {
+      if (_currentIndex > 0) {
+        --_currentIndex;
+
+        //If you just do this it waits until the previous sentence is said
+        //playSentence();
+
+        AlanVoice.deactivate();
+        AlanVoice.activate();
+        playSentence();
+      }
+    });
+  }
+
+  void onClickForward() {
+    setState(() {
+      if (_currentIndex < widget.sentences.length - 1) {
+        ++_currentIndex;
+
+        //If you just do this it waits until the previous sentence is said
+        //playSentence();
+
+        AlanVoice.deactivate();
+        AlanVoice.activate();
+        playSentence();
+      }
+    });
+  }
+
+
 
   Widget getCurrentSentences() {
     if (widget.sentences.length >= 3) {
@@ -78,32 +150,32 @@ class Memorize extends State<MemorizeScreen> {
 
   Widget getCasualSentence(int index) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-            child: Text(
-              '${index + 1}',
-              style: const TextStyle(
-                fontWeight: FontWeight.w500,
-                fontSize: 22,
-                color: Color.fromRGBO(0, 0, 0, 0.5),
+        padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+              child: Text(
+                '${index + 1}',
+                style: const TextStyle(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 22,
+                  color: Color.fromRGBO(0, 0, 0, 0.5),
+                ),
               ),
             ),
-          ),
-          Flexible(
-            child: Text(
-              widget.sentences[index]!,
-              style: const TextStyle(
-                  fontWeight: FontWeight.w400,
-                  fontSize: 28,
-                  color: Color.fromRGBO(115, 129, 255, 1),
-                  fontFamily: 'RobotoMono'),
-            ),
-          )
-        ],
-      )
+            Flexible(
+              child: Text(
+                widget.sentences[index]!,
+                style: const TextStyle(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 28,
+                    color: Color.fromRGBO(115, 129, 255, 1),
+                    fontFamily: 'RobotoMono'),
+              ),
+            )
+          ],
+        )
     );
   }
 
@@ -192,16 +264,16 @@ class Memorize extends State<MemorizeScreen> {
                         children: [
                           Expanded(
                               child: Container(
-                            padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                            child: Text(
-                              '${_currentIndex + 1}/${widget.sentences.length} complete',
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w500,
-                                fontSize: 24,
-                                color: Color.fromRGBO(0, 0, 0, 0.5),
-                              ),
-                            ),
-                          )),
+                                padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                child: Text(
+                                  '${_currentIndex + 1}/${widget.sentences.length} complete',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 24,
+                                    color: Color.fromRGBO(0, 0, 0, 0.5),
+                                  ),
+                                ),
+                              )),
                           Container(
                               padding: const EdgeInsets.fromLTRB(0, 0, 10, 10),
                               child: Column(
@@ -246,13 +318,7 @@ class Memorize extends State<MemorizeScreen> {
                       child: IconButton(
                         icon: const Icon(Icons.fast_rewind_outlined),
                         color: Colors.white,
-                        onPressed: () {
-                          setState(() {
-                            if (_currentIndex > 0) {
-                              --_currentIndex;
-                            }
-                          });
-                        },
+                        onPressed: onClickRewind,
                         iconSize: 50,
                       ),
                     ),
@@ -262,9 +328,9 @@ class Memorize extends State<MemorizeScreen> {
                         shape: CircleBorder(),
                       ),
                       child: IconButton(
-                        icon: const Icon(Icons.play_arrow),
+                        icon: isPlayingNow ? const Icon(Icons.pause) : const Icon(Icons.play_arrow),
                         color: Colors.white,
-                        onPressed: () {},
+                        onPressed: onClickPlayPause,
                         iconSize: 50,
                       ),
                     ),
@@ -276,13 +342,7 @@ class Memorize extends State<MemorizeScreen> {
                       child: IconButton(
                         icon: const Icon(Icons.fast_forward_outlined),
                         color: Colors.white,
-                        onPressed: () {
-                          setState(() {
-                            if (_currentIndex < widget.sentences.length - 1) {
-                              ++_currentIndex;
-                            }
-                          });
-                        },
+                        onPressed: onClickForward,
                         iconSize: 50,
                       ),
                     ),
