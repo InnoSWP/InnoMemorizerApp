@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:alan_voice/alan_voice.dart';
 import '../common/theme.dart';
 import 'dart:convert';
+import 'package:memorizer/widgets/options.dart';
 
 class MemorizeScreen extends StatefulWidget {
   const MemorizeScreen({Key? key, required this.title, required this.sentences})
@@ -62,8 +63,19 @@ class Memorize extends State<MemorizeScreen> {
 
   void playSentence() {
     //await AlanVoice.playText(widget.sentences[_currentIndex]!);
-    var params = jsonEncode({"text":widget.sentences[_currentIndex]!});
-    AlanVoice.callProjectApi("script::say", params);
+    var lastCur = _currentIndex;
+
+    AlanVoice.deactivate();
+
+    //Necessary to prevent bugs with voice falling behind fast rewind and forward button clicking
+    //Because when callProjectApi is called even if you call the second, the first will say
+    Future.delayed(const Duration(milliseconds: 1000), () {
+      if (lastCur == _currentIndex) {
+        AlanVoice.activate();
+        var params = jsonEncode({"text":widget.sentences[_currentIndex]!});
+        AlanVoice.callProjectApi("script::say", params);
+      }
+    });
     //playSentence();
   }
 
@@ -75,8 +87,8 @@ class Memorize extends State<MemorizeScreen> {
         //If you just do this it waits until the previous sentence is said
         //playSentence();
 
-        AlanVoice.deactivate();
-        AlanVoice.activate();
+        //AlanVoice.deactivate();
+        //AlanVoice.activate();
         playSentence();
       }
     });
@@ -90,8 +102,8 @@ class Memorize extends State<MemorizeScreen> {
         //If you just do this it waits until the previous sentence is said
         //playSentence();
 
-        AlanVoice.deactivate();
-        AlanVoice.activate();
+        //AlanVoice.deactivate();
+        //AlanVoice.activate();
         playSentence();
       }
     });
@@ -231,7 +243,17 @@ class Memorize extends State<MemorizeScreen> {
                 fontSize: 28)),
         actions: [
           IconButton(
-              onPressed: () {},
+              onPressed: () {
+                setState(() {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          OptionsScreen(),
+                    ),
+                  );
+                });
+              },
               icon: const Icon(
                 Icons.settings,
                 color: CustomColors.greyText,
