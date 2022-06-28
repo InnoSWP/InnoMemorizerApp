@@ -41,16 +41,16 @@ Widget getPasteTextScreen(context, textController, animationController) {
         ),
         Padding(
           padding: EdgeInsets.fromLTRB(
-            MediaQuery.of(context).size.width * 0.12,
+            MediaQuery.of(context).size.width * 0.1,
             0,
-            MediaQuery.of(context).size.width * 0.12,
-            MediaQuery.of(context).size.height * 0.03,
+            MediaQuery.of(context).size.width * 0.1,
+            MediaQuery.of(context).size.height * 0.1,
           ),
           child: SizedBox(
-            height: MediaQuery.of(context).size.height * 0.5,
+            height: MediaQuery.of(context).size.height * 0.4,
             child: TextField(
                 controller: textController,
-                maxLines: 35,
+                maxLines: 32,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
                     borderSide:

@@ -14,6 +14,7 @@ class _OptionsScreenState extends State<OptionsScreen> {
   bool repeatEachSentence = false;
   bool enableVoiceCommands = false;
 
+  @override
   Widget build(context) {
     return Scaffold(
       appBar: AppBar(
@@ -43,7 +44,7 @@ class _OptionsScreenState extends State<OptionsScreen> {
         child: Column(children: [
           Row(
             children: [
-              Expanded(
+              const Expanded(
                 child: Text('Repeat each sentence',
                   style: TextStyle(
                       fontSize: 20
@@ -70,7 +71,7 @@ class _OptionsScreenState extends State<OptionsScreen> {
 
           Row(
             children: [
-              Expanded(
+              const Expanded(
                 child: Text('Repeat amount',
                     style: TextStyle(
                         fontSize: 20
@@ -105,7 +106,7 @@ class _OptionsScreenState extends State<OptionsScreen> {
 
           Row(
             children: [
-              Expanded(
+              const Expanded(
                 child: Text('Enable voice commands',
                     style: TextStyle(
                         fontSize: 20
@@ -142,6 +143,7 @@ class MyToggle extends StatelessWidget {
   final Color color1 = Colors.white;
   final Color color2 = CustomColors.primary;
 
+  @override
   Widget build(context) {
     return ToggleSwitch(
       //minWidth: MediaQuery.of(context).size.width * 0.34,

@@ -5,7 +5,6 @@ import 'package:memorizer/utils/sentences_parser.dart';
 import 'package:memorizer/widgets/memorize.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 import 'package:memorizer/widgets/paste_text.dart';
-import 'package:memorizer/widgets/upload.dart';
 import 'package:file_picker/file_picker.dart';
 
 import 'package:pdf_text/pdf_text.dart';
@@ -49,7 +48,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   PDFDoc? _pdfDoc;
   String? _pdfText;
   PlatformFile? _platformFile;
-  bool _buttonEnabled = true;
+  bool _buttonEnabled = false;
   int _initialIndex = 0;
   Screen selectedScreen = Screen.pasteText;
 
@@ -59,6 +58,17 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
 
   Color color1 = Colors.white;
   Color color2 = CustomColors.primary;
+
+  void clearUploadedFile() {
+    setState(() {
+      _buttonEnabled = false;
+      _platformFile = null;
+      _pdfDoc?.deleteFile();
+      _pdfText = null;
+      fileAnimationController.stop();
+      fileAnimationController.reset();
+    });
+  }
 
   Future _pickPDF() async {
     var filePickerResult = await FilePicker.platform.pickFiles(
@@ -73,6 +83,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     }
 
     fileAnimationController.forward();
+    _fetchPDF();
   }
 
   Future _fetchPDF() async {
@@ -85,6 +96,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     String text = await _pdfDoc!.text;
 
     setState(() {
+      fileAnimationController.fling();
       _pdfText = text;
       _buttonEnabled = true;
     });
@@ -101,6 +113,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
               MemorizeScreen(title: 'Memorize', sentences: sentences),
         ),
       );
+      clearUploadedFile();
     });
   }
 
@@ -109,9 +122,9 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       children: <Widget>[
         Padding(
           padding: EdgeInsets.only(
-            left: MediaQuery.of(context).size.width * 0.14,
-            right: MediaQuery.of(context).size.width * 0.14,
-            bottom: MediaQuery.of(context).size.height * 0.009,
+            left: MediaQuery.of(context).size.width * 0.1,
+            right: MediaQuery.of(context).size.width * 0.1,
+            bottom: MediaQuery.of(context).size.height * 0.05,
           ),
           child: InkWell(
             onTap: _pickPDF,
@@ -120,13 +133,11 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
               radius: const Radius.circular(4),
               dashPattern: const [10, 4],
               strokeCap: StrokeCap.round,
-              //padding: EdgeInsets.all(6),
               color: const Color.fromRGBO(56, 78, 183, 0.3),
               child: ClipRRect(
                 borderRadius: const BorderRadius.all(Radius.circular(4)),
                 child: Container(
-                    height: 250,
-                    //width: 120,
+                    height: 350,
                     color: const Color.fromRGBO(248, 248, 255, 1),
                     child: Center(
                         child: Column(
@@ -173,7 +184,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         ),
         _platformFile != null
             ? Container(
-            padding: const EdgeInsets.all(30),
+            padding: const EdgeInsets.only(left: 30, right: 30),
             child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -194,10 +205,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                         icon: const Icon(Icons.remove_circle_outlined),
                         color: const Color.fromRGBO(230, 230, 230, 1),
                         onPressed: () {
-                          _platformFile = null;
-                          _pdfDoc?.deleteFile();
-                          fileAnimationController.stop();
-                          fileAnimationController.reset();
+                          clearUploadedFile();
                         },
                       ),
                       border: OutlineInputBorder(
@@ -233,7 +241,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
             : Container(),
         Padding(
           padding:
-          EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.05),
+          EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.07),
           child: SizedBox(
             width: MediaQuery.of(context).size.width * 0.9,
             height: MediaQuery.of(context).size.height * 0.06,

@@ -318,7 +318,7 @@ class Memorize extends State<MemorizeScreen> {
                 child: Column(
                   children: <Widget>[
 
-                    Container(
+                    SizedBox(
                       height: MediaQuery.of(context).size.height * 0.575,
                       child: getCurrentSentences(),
                     ),
@@ -365,7 +365,7 @@ class Memorize extends State<MemorizeScreen> {
                                     top: MediaQuery.of(context).size.height * 0.01,
                                     bottom: MediaQuery.of(context).size.height * 0.015
                                 ),
-                                child: Container(
+                                child: SizedBox(
                                   height: 35,
                                   width: 70,
                                   child: TextField(
@@ -410,7 +410,7 @@ class Memorize extends State<MemorizeScreen> {
                       child: Ink(
                         decoration: ShapeDecoration(
                           color: Color.fromRGBO(27, 165, 242, buttonsAreActive ? 1 : 0.3),
-                          shape: CircleBorder(),
+                          shape: const CircleBorder(),
                         ),
                         child: IconButton(
                           icon: const Icon(Icons.refresh),
@@ -423,7 +423,7 @@ class Memorize extends State<MemorizeScreen> {
                     Ink(
                       decoration: ShapeDecoration(
                         color: Color.fromRGBO(72, 62, 168, buttonsAreActive ? 1 : 0.3),
-                        shape: CircleBorder(),
+                        shape: const CircleBorder(),
                       ),
                       child: IconButton(
                         icon: const Icon(Icons.fast_rewind_outlined),
@@ -435,7 +435,7 @@ class Memorize extends State<MemorizeScreen> {
                     Ink(
                       decoration: ShapeDecoration(
                         color: Color.fromRGBO(72, 62, 168, buttonsAreActive ? 1 : 0.3),
-                        shape: CircleBorder(),
+                        shape: const CircleBorder(),
                       ),
                       child: IconButton(
                         icon: isPlayingNow ? const Icon(Icons.pause) : const Icon(Icons.play_arrow),
@@ -447,7 +447,7 @@ class Memorize extends State<MemorizeScreen> {
                     Ink(
                       decoration: ShapeDecoration(
                         color: Color.fromRGBO(72, 62, 168, buttonsAreActive ? 1 : 0.3),
-                        shape: CircleBorder(),
+                        shape: const CircleBorder(),
                       ),
                       child: IconButton(
                         icon: const Icon(Icons.fast_forward_outlined),
