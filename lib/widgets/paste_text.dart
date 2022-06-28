@@ -44,76 +44,81 @@ Widget getPasteTextScreen(context, textController, animationController) {
             MediaQuery.of(context).size.width * 0.12,
             0,
             MediaQuery.of(context).size.width * 0.12,
-            MediaQuery.of(context).size.width * 0.15,
+            MediaQuery.of(context).size.height * 0.03,
           ),
           child: SizedBox(
-            height: 200,
+            height: MediaQuery.of(context).size.height * 0.5,
             child: TextField(
                 controller: textController,
-                maxLines: 10,
+                maxLines: 35,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
                     borderSide:
-                        const BorderSide(color: CustomColors.blueBorder),
+                    const BorderSide(color: CustomColors.blueBorder),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderSide:
-                        const BorderSide(color: CustomColors.darkBlueBorder),
+                    const BorderSide(color: CustomColors.darkBlueBorder),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  hintText: 'Input your text here',
+                  hintText: 'Type or paste your text here...',
                   prefixText: ' ',
                 )),
           ),
         ),
-        animationController.value == 0.0
-            ? const SizedBox(
-                height: 10,
-              )
-            : Column(
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(
-                      left: MediaQuery.of(context).size.width * 0.12,
-                      bottom: MediaQuery.of(context).size.height * 0.0236,
-                    ),
-                    child: const Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text('Parsing...',
-                          style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.w700,
-                            color: CustomColors.greyText,
-                          )),
+
+
+
+        Visibility(
+            maintainSize: true,
+            maintainAnimation: true,
+            maintainState: true,
+            visible: animationController.value != 0.0,
+            child: Column(
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(
+                    left: MediaQuery.of(context).size.width * 0.12,
+                    bottom: MediaQuery.of(context).size.height * 0.0236,
+                  ),
+                  child: const Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text('Parsing...',
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w700,
+                          color: CustomColors.greyText,
+                        )),
+                  ),
+                ),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(1000),
+                  child: SizedBox(
+                    width: 320,
+                    child: LinearProgressIndicator(
+                      minHeight: 22,
+                      backgroundColor: const Color.fromRGBO(190, 200, 236, 1),
+                      valueColor: const AlwaysStoppedAnimation<Color>(
+                          CustomColors.primary),
+                      value: animationController.value,
+                      semanticsLabel: 'parsing indicator',
                     ),
                   ),
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(1000),
-                    child: SizedBox(
-                      width: 320,
-                      child: LinearProgressIndicator(
-                        minHeight: 22,
-                        backgroundColor: const Color.fromRGBO(190, 200, 236, 1),
-                        valueColor: const AlwaysStoppedAnimation<Color>(
-                            CustomColors.primary),
-                        value: animationController.value,
-                        semanticsLabel: 'parsing indicator',
-                      ),
-                    ),
-                  ),
-                  Text(
-                      "${(animationController.value * 100).round()}% completed",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
-                        color: CustomColors.primary.withOpacity(0.5),
-                      )),
-                ],
-              ),
+                ),
+                Text(
+                    "${(animationController.value * 100).round()}% completed",
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500,
+                      color: CustomColors.primary.withOpacity(0.5),
+                    )),
+              ],
+            )
+        ),
         Padding(
           padding:
-              EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.1),
+          EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.03),
           child: SizedBox(
             width: MediaQuery.of(context).size.width * 0.9,
             height: MediaQuery.of(context).size.height * 0.06,
@@ -123,30 +128,30 @@ Widget getPasteTextScreen(context, textController, animationController) {
                 return ElevatedButton(
                     onPressed: value.text.isNotEmpty
                         ? () {
-                            animationController.forward();
-                            fetchSentences(value.text)
-                                .then((sentences) {
-                              while (animationController.status !=
-                                  AnimationStatus.completed) {
-                                animationController.value += 0.01;
-                                Future.delayed(
-                                    const Duration(milliseconds: 200));
-                              }
-                              animationController.reset();
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => MemorizeScreen(
-                                      title: 'Memorize', sentences: sentences),
-                                ),
-                              );
-                            });
-                          }
+                      animationController.forward();
+                      fetchSentences(value.text)
+                          .then((sentences) {
+                        while (animationController.status !=
+                            AnimationStatus.completed) {
+                          animationController.value += 0.01;
+                          Future.delayed(
+                              const Duration(milliseconds: 200));
+                        }
+                        animationController.reset();
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => MemorizeScreen(
+                                title: 'Memorize', sentences: sentences),
+                          ),
+                        );
+                      });
+                    }
                         : null,
                     style: ButtonStyle(
                       backgroundColor:
-                          MaterialStateProperty.resolveWith<Color?>(
-                        (Set<MaterialState> states) {
+                      MaterialStateProperty.resolveWith<Color?>(
+                            (Set<MaterialState> states) {
                           if (states.contains(MaterialState.pressed)) {
                             return CustomColors.primary.withOpacity(0.5);
                           } else if (states.contains(MaterialState.disabled)) {
