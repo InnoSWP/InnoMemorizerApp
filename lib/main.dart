@@ -130,110 +130,110 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                     color: const Color.fromRGBO(248, 248, 255, 1),
                     child: Center(
                         child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Container(
-                          padding: EdgeInsets.only(
-                              bottom:
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Container(
+                              padding: EdgeInsets.only(
+                                  bottom:
                                   MediaQuery.of(context).size.height * 0.04),
-                          child: const Image(
-                              image: AssetImage('assets/images/upload.png')),
-                        ),
-                        Container(
-                            padding: EdgeInsets.only(
-                                bottom:
-                                    MediaQuery.of(context).size.height * 0.015),
-                            child: const Text(
-                              'Browse files',
-                              style: TextStyle(
-                                fontWeight: FontWeight.w700,
-                                fontSize: 22,
-                                color: Color(0xFF483EA8),
-                                decoration: TextDecoration.underline,
-                              ),
-                            )),
-                        Container(
-                          padding: EdgeInsets.only(
-                              bottom:
-                                  MediaQuery.of(context).size.height * 0.02),
-                          child: const Text(
-                            'Supported format: PDF',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w400,
-                              fontSize: 18,
-                              color: Color.fromRGBO(0, 0, 0, 0.5),
+                              child: const Image(
+                                  image: AssetImage('assets/images/upload.png')),
                             ),
-                          ),
-                        )
-                      ],
-                    ))),
+                            Container(
+                                padding: EdgeInsets.only(
+                                    bottom:
+                                    MediaQuery.of(context).size.height * 0.015),
+                                child: const Text(
+                                  'Browse files',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 22,
+                                    color: Color(0xFF483EA8),
+                                    decoration: TextDecoration.underline,
+                                  ),
+                                )),
+                            Container(
+                              padding: EdgeInsets.only(
+                                  bottom:
+                                  MediaQuery.of(context).size.height * 0.02),
+                              child: const Text(
+                                'Supported format: PDF',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 18,
+                                  color: Color.fromRGBO(0, 0, 0, 0.5),
+                                ),
+                              ),
+                            )
+                          ],
+                        ))),
               ),
             ),
           ),
         ),
         _platformFile != null
             ? Container(
-                padding: const EdgeInsets.all(30),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text('Uploading...',
-                          style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.w700,
-                            color: CustomColors.greyText,
-                          )),
-                      const SizedBox(
-                        height: 15,
+            padding: const EdgeInsets.all(30),
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Uploading...',
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w700,
+                        color: CustomColors.greyText,
+                      )),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  TextField(
+                    readOnly: true,
+                    decoration: InputDecoration(
+                      hintText: _platformFile!.name,
+                      suffixIcon: IconButton(
+                        icon: const Icon(Icons.remove_circle_outlined),
+                        color: const Color.fromRGBO(230, 230, 230, 1),
+                        onPressed: () {
+                          _platformFile = null;
+                          _pdfDoc?.deleteFile();
+                          fileAnimationController.stop();
+                          fileAnimationController.reset();
+                        },
                       ),
-                      TextField(
-                        readOnly: true,
-                        decoration: InputDecoration(
-                          hintText: _platformFile!.name,
-                          suffixIcon: IconButton(
-                            icon: const Icon(Icons.remove_circle_outlined),
-                            color: const Color.fromRGBO(230, 230, 230, 1),
-                            onPressed: () {
-                              _platformFile = null;
-                              _pdfDoc?.deleteFile();
-                              fileAnimationController.stop();
-                              fileAnimationController.reset();
-                            },
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(4.0),
-                            borderSide: const BorderSide(
-                              color: Color.fromRGBO(227, 227, 227, 1),
-                              width: 1,
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(4.0),
-                            borderSide: const BorderSide(
-                              color: Color.fromRGBO(227, 227, 227, 1),
-                              width: 1,
-                            ),
-                          ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(4.0),
+                        borderSide: const BorderSide(
+                          color: Color.fromRGBO(227, 227, 227, 1),
+                          width: 1,
                         ),
                       ),
-                      Container(
-                          height: 2,
-                          clipBehavior: Clip.hardEdge,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(5),
-                            color: CustomColors.primary,
-                          ),
-                          child: LinearProgressIndicator(
-                            value: fileAnimationController.value,
-                            valueColor: const AlwaysStoppedAnimation<Color>(
-                                CustomColors.primary),
-                            backgroundColor: Colors.white,
-                          )),
-                    ]))
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(4.0),
+                        borderSide: const BorderSide(
+                          color: Color.fromRGBO(227, 227, 227, 1),
+                          width: 1,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Container(
+                      height: 2,
+                      clipBehavior: Clip.hardEdge,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        color: CustomColors.primary,
+                      ),
+                      child: LinearProgressIndicator(
+                        value: fileAnimationController.value,
+                        valueColor: const AlwaysStoppedAnimation<Color>(
+                            CustomColors.primary),
+                        backgroundColor: Colors.white,
+                      )),
+                ]))
             : Container(),
         Padding(
           padding:
-              EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.05),
+          EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.05),
           child: SizedBox(
             width: MediaQuery.of(context).size.width * 0.9,
             height: MediaQuery.of(context).size.height * 0.06,
@@ -241,7 +241,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 onPressed: _buttonEnabled ? _sendText : null,
                 style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.resolveWith<Color?>(
-                    (Set<MaterialState> states) {
+                        (Set<MaterialState> states) {
                       if (states.contains(MaterialState.pressed)) {
                         return CustomColors.primary.withOpacity(0.5);
                       } else if (states.contains(MaterialState.disabled)) {
@@ -283,15 +283,15 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       vsync: this,
       duration: const Duration(seconds: 3),
     )..addListener(() {
-        setState(() {});
-      });
+      setState(() {});
+    });
 
     fileAnimationController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 6),
     )..addListener(() {
-        setState(() {});
-      });
+      setState(() {});
+    });
 
     super.initState();
   }
@@ -314,9 +314,9 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
           Padding(
             padding: EdgeInsets.fromLTRB(
               0,
-              MediaQuery.of(context).size.width * 0.15,
+              MediaQuery.of(context).size.height * 0.075,
               0,
-              MediaQuery.of(context).size.width * 0.1,
+              MediaQuery.of(context).size.height * 0.05,
             ),
             child: ToggleSwitch(
               minWidth: MediaQuery.of(context).size.width * 0.34,
@@ -349,7 +349,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 CustomColors.whiteBorder
               ],
               borderWidth: 0.5,
-              labels: const ['Paste text', 'Upload'],
+              labels: const ['Type', 'Upload'],
               radiusStyle: true,
               onToggle: (index) {
                 setState(() {
