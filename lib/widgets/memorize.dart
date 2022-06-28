@@ -41,11 +41,10 @@ class Memorize extends State<MemorizeScreen> {
     });
   }
 
-
   bool isPlayingNow = false;
+
   void onClickPlayPause() {
     if (!isPlayingNow) {
-
       AlanVoice.activate();
       playSentence();
 
@@ -72,7 +71,7 @@ class Memorize extends State<MemorizeScreen> {
     Future.delayed(const Duration(milliseconds: 1000), () {
       if (lastCur == _currentIndex) {
         AlanVoice.activate();
-        var params = jsonEncode({"text":widget.sentences[_currentIndex]!});
+        var params = jsonEncode({"text": widget.sentences[_currentIndex]!});
         AlanVoice.callProjectApi("script::say", params);
       }
     });
@@ -109,56 +108,43 @@ class Memorize extends State<MemorizeScreen> {
     });
   }
 
-
-
   Widget getCurrentSentences() {
     if (widget.sentences.length >= 3) {
       if (_currentIndex == 0) {
-        return Column(
-            children: <Widget>[
-              getHighlightedSentence(_currentIndex),
-              getCasualSentence(_currentIndex + 1),
-              getCasualSentence(_currentIndex + 2),
-            ]
-        );
+        return Column(children: <Widget>[
+          getHighlightedSentence(_currentIndex),
+          getCasualSentence(_currentIndex + 1),
+          getCasualSentence(_currentIndex + 2),
+        ]);
       } else if (_currentIndex == widget.sentences.length - 1) {
-        return Column(
-            children: <Widget>[
-              getCasualSentence(_currentIndex - 2),
-              getCasualSentence(_currentIndex - 1),
-              getHighlightedSentence(_currentIndex),
-            ]
-        );
+        return Column(children: <Widget>[
+          getCasualSentence(_currentIndex - 2),
+          getCasualSentence(_currentIndex - 1),
+          getHighlightedSentence(_currentIndex),
+        ]);
       } else {
-        return Column(
-            children: <Widget>[
-              getCasualSentence(_currentIndex - 1),
-              getHighlightedSentence(_currentIndex),
-              getCasualSentence(_currentIndex + 1),
-            ]
-        );
+        return Column(children: <Widget>[
+          getCasualSentence(_currentIndex - 1),
+          getHighlightedSentence(_currentIndex),
+          getCasualSentence(_currentIndex + 1),
+        ]);
       }
     } else if (widget.sentences.length == 2) {
       if (_currentIndex == 0) {
-        return Column(
-            children: <Widget>[
-              getHighlightedSentence(_currentIndex),
-              getCasualSentence(_currentIndex + 1),
-            ]
-        );
+        return Column(children: <Widget>[
+          getHighlightedSentence(_currentIndex),
+          getCasualSentence(_currentIndex + 1),
+        ]);
       } else {
-        return Column(
-            children: <Widget>[
-              getCasualSentence(_currentIndex - 1),
-              getHighlightedSentence(_currentIndex),
-            ]
-        );
+        return Column(children: <Widget>[
+          getCasualSentence(_currentIndex - 1),
+          getHighlightedSentence(_currentIndex),
+        ]);
       }
     }
 
     return getHighlightedSentence(_currentIndex);
   }
-
 
   Widget getCasualSentence(int index) {
     return Container(
@@ -187,8 +173,7 @@ class Memorize extends State<MemorizeScreen> {
               ),
             )
           ],
-        )
-    );
+        ));
   }
 
   Widget getHighlightedSentence(int index) {
@@ -224,7 +209,6 @@ class Memorize extends State<MemorizeScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
@@ -248,8 +232,7 @@ class Memorize extends State<MemorizeScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>
-                          OptionsScreen(),
+                      builder: (context) => OptionsScreen(),
                     ),
                   );
                 });
@@ -263,30 +246,31 @@ class Memorize extends State<MemorizeScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.only(top: 40),
-        child: Column(
+        child: Stack(
           children: <Widget>[
-            Container(
-              padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-              child: Container(
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: CustomColors.blueBorder,
-                    width: 1,
-                  ),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Column(
-                  children: <Widget>[
-
-                    getCurrentSentences(),
-
-                    Container(
-                      padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
-                      child: Row(
-                        children: [
-                          Expanded(
-                              child: Container(
-                                padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+            Column(
+              children: <Widget>[
+                Container(
+                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: CustomColors.blueBorder,
+                        width: 1,
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Column(
+                      children: <Widget>[
+                        getCurrentSentences(),
+                        Container(
+                          padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                  child: Container(
+                                padding:
+                                    const EdgeInsets.fromLTRB(10, 0, 10, 0),
                                 child: Text(
                                   '${_currentIndex + 1}/${widget.sentences.length} complete',
                                   style: const TextStyle(
@@ -296,38 +280,41 @@ class Memorize extends State<MemorizeScreen> {
                                   ),
                                 ),
                               )),
-                          Container(
-                              padding: const EdgeInsets.fromLTRB(0, 0, 10, 10),
-                              child: Column(
-                                children: [
-                                  IconButton(
-                                    iconSize: 40,
-                                    icon: const Icon(
-                                      Icons.refresh,
-                                      color: Colors.black,
-                                    ),
-                                    onPressed: () {},
-                                  ),
-                                  const Text(
-                                    'Repeat',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 22,
-                                      color: Color.fromRGBO(0, 0, 0, 0.5),
-                                    ),
-                                  ),
-                                ],
-                              ))
-                        ],
-                      ),
+                              Container(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(0, 0, 10, 10),
+                                  child: Column(
+                                    children: [
+                                      IconButton(
+                                        iconSize: 40,
+                                        icon: const Icon(
+                                          Icons.refresh,
+                                          color: Colors.black,
+                                        ),
+                                        onPressed: () {},
+                                      ),
+                                      const Text(
+                                        'Repeat',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 22,
+                                          color: Color.fromRGBO(0, 0, 0, 0.5),
+                                        ),
+                                      ),
+                                    ],
+                                  ))
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              ),
+                  ),
+                )
+              ],
             ),
-
-            Container(
-                padding: const EdgeInsets.fromLTRB(0, 110, 0, 0),
+            Positioned(
+                bottom: MediaQuery.of(context).size.height * 0.1,
+                width: MediaQuery.of(context).size.width,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -344,16 +331,21 @@ class Memorize extends State<MemorizeScreen> {
                         iconSize: 50,
                       ),
                     ),
-                    Ink(
-                      decoration: const ShapeDecoration(
-                        color: Color.fromRGBO(72, 62, 168, 1),
-                        shape: CircleBorder(),
-                      ),
-                      child: IconButton(
-                        icon: isPlayingNow ? const Icon(Icons.pause) : const Icon(Icons.play_arrow),
-                        color: Colors.white,
-                        onPressed: onClickPlayPause,
-                        iconSize: 50,
+                    Padding(
+                      padding: const EdgeInsets.only(left: 10, right: 10),
+                      child: Ink(
+                        decoration: const ShapeDecoration(
+                          color: Color.fromRGBO(72, 62, 168, 1),
+                          shape: CircleBorder(),
+                        ),
+                        child: IconButton(
+                          icon: isPlayingNow
+                              ? const Icon(Icons.pause)
+                              : const Icon(Icons.play_arrow),
+                          color: Colors.white,
+                          onPressed: onClickPlayPause,
+                          iconSize: 75,
+                        ),
                       ),
                     ),
                     Ink(
