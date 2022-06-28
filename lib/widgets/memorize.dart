@@ -41,110 +41,156 @@ class Memorize extends State<MemorizeScreen> {
     });
   }
 
+
   bool isPlayingNow = false;
-
+  bool buttonsAreActive = true;
   void onClickPlayPause() {
-    if (!isPlayingNow) {
-      AlanVoice.activate();
-      playSentence();
+    if (buttonsAreActive) {
+      if (!isPlayingNow) {
 
-      setState(() {
-        isPlayingNow = true;
-      });
-    } else {
-      AlanVoice.deactivate();
+        AlanVoice.activate();
 
-      setState(() {
-        isPlayingNow = false;
-      });
+        setState(() {
+          isPlayingNow = true;
+
+          buttonsAreActive = false;
+          Future.delayed(const Duration(milliseconds: 1000), () {
+            setState(() {
+              buttonsAreActive = true;
+            });
+          });
+        });
+
+        playSentence();
+
+      } else {
+        AlanVoice.deactivate();
+
+        setState(() {
+          isPlayingNow = false;
+        });
+      }
     }
   }
 
   void playSentence() {
     //await AlanVoice.playText(widget.sentences[_currentIndex]!);
-    var lastCur = _currentIndex;
+    //var lastCur = _currentIndex;
 
-    AlanVoice.deactivate();
+    //AlanVoice.deactivate();
 
     //Necessary to prevent bugs with voice falling behind fast rewind and forward button clicking
     //Because when callProjectApi is called even if you call the second, the first will say
-    Future.delayed(const Duration(milliseconds: 1000), () {
-      if (lastCur == _currentIndex) {
-        AlanVoice.activate();
-        var params = jsonEncode({"text": widget.sentences[_currentIndex]!});
+    //Future.delayed(const Duration(milliseconds: 1000), () {
+    //  if (lastCur == _currentIndex) {
+        //AlanVoice.activate();
+
+        var params = jsonEncode({"text":widget.sentences[_currentIndex]!});
         AlanVoice.callProjectApi("script::say", params);
-      }
-    });
+    //  }
+    //});
     //playSentence();
   }
 
   void onClickRewind() {
-    setState(() {
-      if (_currentIndex > 0) {
-        --_currentIndex;
+    if (buttonsAreActive) {
+      setState(() {
+        if (_currentIndex > 0) {
+          --_currentIndex;
 
-        //If you just do this it waits until the previous sentence is said
-        //playSentence();
+          //If you just do this it waits until the previous sentence is said
+          //playSentence();
 
-        //AlanVoice.deactivate();
-        //AlanVoice.activate();
-        playSentence();
-      }
-    });
+          //AlanVoice.deactivate();
+          //AlanVoice.activate();
+
+          AlanVoice.deactivate();
+          isPlayingNow = false;
+        }
+      });
+    }
   }
 
   void onClickForward() {
-    setState(() {
-      if (_currentIndex < widget.sentences.length - 1) {
-        ++_currentIndex;
+    if (buttonsAreActive) {
+      setState(() {
+        if (_currentIndex < widget.sentences.length - 1) {
+          ++_currentIndex;
 
-        //If you just do this it waits until the previous sentence is said
-        //playSentence();
+          //If you just do this it waits until the previous sentence is said
+          //playSentence();
 
-        //AlanVoice.deactivate();
-        //AlanVoice.activate();
-        playSentence();
-      }
-    });
+          //AlanVoice.deactivate();
+          //AlanVoice.activate();
+
+          AlanVoice.deactivate();
+          isPlayingNow = false;
+        }
+      });
+    }
   }
 
+
   Widget getCurrentSentences() {
+    List<Widget> children = [];
+    for (int i = 0; i < widget.sentences.length; i++) {
+      children.add(i == _currentIndex ? getHighlightedSentence(i) : getCasualSentence(i));
+    }
+
+    return ListView(
+      children: children
+    );
+  }
+
+
+  Widget getCurrentSentences2() {
     if (widget.sentences.length >= 3) {
       if (_currentIndex == 0) {
-        return Column(children: <Widget>[
-          getHighlightedSentence(_currentIndex),
-          getCasualSentence(_currentIndex + 1),
-          getCasualSentence(_currentIndex + 2),
-        ]);
+        return Column(
+            children: <Widget>[
+              getHighlightedSentence(_currentIndex),
+              getCasualSentence(_currentIndex + 1),
+              getCasualSentence(_currentIndex + 2),
+            ]
+        );
       } else if (_currentIndex == widget.sentences.length - 1) {
-        return Column(children: <Widget>[
-          getCasualSentence(_currentIndex - 2),
-          getCasualSentence(_currentIndex - 1),
-          getHighlightedSentence(_currentIndex),
-        ]);
+        return Column(
+            children: <Widget>[
+              getCasualSentence(_currentIndex - 2),
+              getCasualSentence(_currentIndex - 1),
+              getHighlightedSentence(_currentIndex),
+            ]
+        );
       } else {
-        return Column(children: <Widget>[
-          getCasualSentence(_currentIndex - 1),
-          getHighlightedSentence(_currentIndex),
-          getCasualSentence(_currentIndex + 1),
-        ]);
+        return Column(
+            children: <Widget>[
+              getCasualSentence(_currentIndex - 1),
+              getHighlightedSentence(_currentIndex),
+              getCasualSentence(_currentIndex + 1),
+            ]
+        );
       }
     } else if (widget.sentences.length == 2) {
       if (_currentIndex == 0) {
-        return Column(children: <Widget>[
-          getHighlightedSentence(_currentIndex),
-          getCasualSentence(_currentIndex + 1),
-        ]);
+        return Column(
+            children: <Widget>[
+              getHighlightedSentence(_currentIndex),
+              getCasualSentence(_currentIndex + 1),
+            ]
+        );
       } else {
-        return Column(children: <Widget>[
-          getCasualSentence(_currentIndex - 1),
-          getHighlightedSentence(_currentIndex),
-        ]);
+        return Column(
+            children: <Widget>[
+              getCasualSentence(_currentIndex - 1),
+              getHighlightedSentence(_currentIndex),
+            ]
+        );
       }
     }
 
     return getHighlightedSentence(_currentIndex);
   }
+
 
   Widget getCasualSentence(int index) {
     return Container(
@@ -173,7 +219,8 @@ class Memorize extends State<MemorizeScreen> {
               ),
             )
           ],
-        ));
+        )
+    );
   }
 
   Widget getHighlightedSentence(int index) {
@@ -209,6 +256,7 @@ class Memorize extends State<MemorizeScreen> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
@@ -227,12 +275,16 @@ class Memorize extends State<MemorizeScreen> {
                 fontSize: 28)),
         actions: [
           IconButton(
+              padding: EdgeInsets.only(
+                right: MediaQuery.of(context).size.width * 0.02
+              ),
               onPressed: () {
                 setState(() {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => OptionsScreen(),
+                      builder: (context) =>
+                          OptionsScreen(),
                     ),
                   );
                 });
@@ -245,83 +297,130 @@ class Memorize extends State<MemorizeScreen> {
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.only(top: 40),
-        child: Stack(
+        padding: EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.02),
+        child: Column(
           children: <Widget>[
-            Column(
-              children: <Widget>[
-                Container(
-                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: CustomColors.blueBorder,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(8),
+            Container(
+              padding: EdgeInsets.only(
+                  left: MediaQuery.of(context).size.width * 0.05,
+                  right: MediaQuery.of(context).size.width * 0.05,
+              ),
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: CustomColors.blueBorder,
+                    width: 1,
+                  ),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Column(
+                  children: <Widget>[
+
+                    Container(
+                      height: MediaQuery.of(context).size.height * 0.575,
+                      child: getCurrentSentences(),
                     ),
-                    child: Column(
-                      children: <Widget>[
-                        getCurrentSentences(),
-                        Container(
-                          padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
-                          child: Row(
+
+                    Container(
+                      padding: EdgeInsets.only(
+                          left: MediaQuery.of(context).size.width * 0.05,
+                          right: MediaQuery.of(context).size.width * 0.05
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              '${_currentIndex + 1}/${widget.sentences.length} complete',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 24,
+                                color: Color.fromRGBO(0, 0, 0, 0.5),
+                              ),
+                            ),
+                          ),
+                          Column(
                             children: [
-                              Expanded(
-                                  child: Container(
-                                padding:
-                                    const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                child: Text(
-                                  '${_currentIndex + 1}/${widget.sentences.length} complete',
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 24,
-                                    color: Color.fromRGBO(0, 0, 0, 0.5),
+                              const Text(
+                                'Repeat',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 22,
+                                  color: Color.fromRGBO(0, 0, 0, 0.5),
+                                ),
+                              ),
+                              const Text(
+                                'amount',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 22,
+                                  color: Color.fromRGBO(0, 0, 0, 0.5),
+                                ),
+                              ),
+
+
+                              Container(
+                                padding: EdgeInsets.only(
+                                    top: MediaQuery.of(context).size.height * 0.01,
+                                    bottom: MediaQuery.of(context).size.height * 0.015
+                                ),
+                                child: Container(
+                                  height: 35,
+                                  width: 70,
+                                  child: TextField(
+                                    //controller: textController,
+                                    //maxLines: 10,
+                                      decoration: InputDecoration(
+                                        border: OutlineInputBorder(
+                                          borderSide: const BorderSide(color: CustomColors.blueBorder),
+                                          borderRadius: BorderRadius.circular(8),
+                                        ),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderSide: const BorderSide(color: CustomColors.darkBlueBorder),
+                                          borderRadius: BorderRadius.circular(8),
+                                        ),
+                                      )
                                   ),
                                 ),
-                              )),
-                              Container(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(0, 0, 10, 10),
-                                  child: Column(
-                                    children: [
-                                      IconButton(
-                                        iconSize: 40,
-                                        icon: const Icon(
-                                          Icons.refresh,
-                                          color: Colors.black,
-                                        ),
-                                        onPressed: () {},
-                                      ),
-                                      const Text(
-                                        'Repeat',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 22,
-                                          color: Color.fromRGBO(0, 0, 0, 0.5),
-                                        ),
-                                      ),
-                                    ],
-                                  ))
+                              )
                             ],
-                          ),
-                        ),
-                      ],
+                          )
+                        ],
+                      ),
                     ),
-                  ),
-                )
-              ],
+                  ],
+                ),
+              ),
             ),
-            Positioned(
-                bottom: MediaQuery.of(context).size.height * 0.1,
-                width: MediaQuery.of(context).size.width,
+
+            Container(
+                padding: EdgeInsets.only(
+                    top: MediaQuery.of(context).size.height * 0.04,
+                    left: MediaQuery.of(context).size.width * 0.04
+                ),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                  //mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
+                    Container(
+                      padding: EdgeInsets.only(
+                          right: MediaQuery.of(context).size.width * 0.045
+                      ),
+                      child: Ink(
+                        decoration: ShapeDecoration(
+                          color: Color.fromRGBO(27, 165, 242, buttonsAreActive ? 1 : 0.3),
+                          shape: CircleBorder(),
+                        ),
+                        child: IconButton(
+                          icon: const Icon(Icons.refresh),
+                          color: Colors.white,
+                          onPressed: onClickRewind,
+                          iconSize: 35,
+                        ),
+                      ),
+                    ),
                     Ink(
-                      decoration: const ShapeDecoration(
-                        color: Color.fromRGBO(72, 62, 168, 1),
+                      decoration: ShapeDecoration(
+                        color: Color.fromRGBO(72, 62, 168, buttonsAreActive ? 1 : 0.3),
                         shape: CircleBorder(),
                       ),
                       child: IconButton(
@@ -331,26 +430,21 @@ class Memorize extends State<MemorizeScreen> {
                         iconSize: 50,
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 10, right: 10),
-                      child: Ink(
-                        decoration: const ShapeDecoration(
-                          color: Color.fromRGBO(72, 62, 168, 1),
-                          shape: CircleBorder(),
-                        ),
-                        child: IconButton(
-                          icon: isPlayingNow
-                              ? const Icon(Icons.pause)
-                              : const Icon(Icons.play_arrow),
-                          color: Colors.white,
-                          onPressed: onClickPlayPause,
-                          iconSize: 75,
-                        ),
+                    Ink(
+                      decoration: ShapeDecoration(
+                        color: Color.fromRGBO(72, 62, 168, buttonsAreActive ? 1 : 0.3),
+                        shape: CircleBorder(),
+                      ),
+                      child: IconButton(
+                        icon: isPlayingNow ? const Icon(Icons.pause) : const Icon(Icons.play_arrow),
+                        color: Colors.white,
+                        onPressed: onClickPlayPause,
+                        iconSize: 50,
                       ),
                     ),
                     Ink(
-                      decoration: const ShapeDecoration(
-                        color: Color.fromRGBO(72, 62, 168, 1),
+                      decoration: ShapeDecoration(
+                        color: Color.fromRGBO(72, 62, 168, buttonsAreActive ? 1 : 0.3),
                         shape: CircleBorder(),
                       ),
                       child: IconButton(
