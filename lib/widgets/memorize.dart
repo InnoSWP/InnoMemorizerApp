@@ -24,7 +24,7 @@ class Memorize extends State<MemorizeScreen> {
         "8118d5e4d24668be5a3c671a4e29cd092e956eca572e1d8b807a3e2338fdd0dc/stage");
 
     /// Handle commands from Alan Studio
-    AlanVoice.onCommand.add((command) {
+    AlanVoice.onCommand.add((command) async {
       debugPrint("got new command ${command.toString()}");
 
       if (command.data["command"] == "finishedPlaying") {
@@ -38,6 +38,8 @@ class Memorize extends State<MemorizeScreen> {
           playSentence();
         }
       }
+
+
     });
   }
 
