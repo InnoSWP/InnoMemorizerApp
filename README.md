@@ -59,4 +59,7 @@ ___
 | Increased features in the app settings        |     ❌     |
 | Add new memorize technic                      |     ❌     |
 
-[!["Buy Me A Coffee"](assets/icons/violet-button.png | width=100)](https://www.buymeacoffee.com/timurx4041)
+___
+## Donate
+
+<img src="assets/icons/violet-button.png" data-canonical-src="https://www.buymeacoffee.com/timurx4041" width="200" height="80"/>
