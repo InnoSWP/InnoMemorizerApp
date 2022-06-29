@@ -3,6 +3,8 @@ import 'package:alan_voice/alan_voice.dart';
 import '../common/theme.dart';
 import 'dart:convert';
 import 'package:memorizer/widgets/options.dart';
+import 'package:flutter/services.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 class MemorizeScreen extends StatefulWidget {
   const MemorizeScreen({Key? key, required this.title, required this.sentences})
@@ -17,6 +19,8 @@ class MemorizeScreen extends StatefulWidget {
 
 class Memorize extends State<MemorizeScreen> {
   int _currentIndex = 0;
+  final ItemScrollController _scrollController = ItemScrollController();
+  final List<Widget> _items = [];
 
   Memorize() {
     /// Init Alan Button with project key from Alan Studio
@@ -33,23 +37,27 @@ class Memorize extends State<MemorizeScreen> {
         //Therefore we don't even need to check isPlayingNow
         if (isPlayingNow && _currentIndex + 1 < widget.sentences.length) {
           setState(() {
-            _currentIndex++;
+            ++_currentIndex;
+
+            _items[_currentIndex] = getHighlightedSentence(_currentIndex);
+            _items[_currentIndex - 1] = getCasualSentence(_currentIndex - 1);
+            _scrollController.scrollTo(
+                index: _currentIndex,
+                duration: const Duration(milliseconds: 400));
           });
           playSentence();
         }
       }
-
-
     });
   }
 
-
   bool isPlayingNow = false;
   bool buttonsAreActive = true;
+  bool isOnRepeat = false;
+
   void onClickPlayPause() {
     if (buttonsAreActive) {
       if (!isPlayingNow) {
-
         AlanVoice.activate();
 
         setState(() {
@@ -64,7 +72,6 @@ class Memorize extends State<MemorizeScreen> {
         });
 
         playSentence();
-
       } else {
         AlanVoice.deactivate();
 
@@ -85,10 +92,10 @@ class Memorize extends State<MemorizeScreen> {
     //Because when callProjectApi is called even if you call the second, the first will say
     //Future.delayed(const Duration(milliseconds: 1000), () {
     //  if (lastCur == _currentIndex) {
-        //AlanVoice.activate();
+    //AlanVoice.activate();
 
-        var params = jsonEncode({"text":widget.sentences[_currentIndex]!});
-        AlanVoice.callProjectApi("script::say", params);
+    var params = jsonEncode({"text": widget.sentences[_currentIndex]!});
+    AlanVoice.callProjectApi("script::say", params);
     //  }
     //});
     //playSentence();
@@ -100,6 +107,11 @@ class Memorize extends State<MemorizeScreen> {
         if (_currentIndex > 0) {
           --_currentIndex;
 
+          _items[_currentIndex] = getHighlightedSentence(_currentIndex);
+          _items[_currentIndex + 1] = getCasualSentence(_currentIndex + 1);
+          _scrollController.scrollTo(
+              index: _currentIndex,
+              duration: const Duration(milliseconds: 400));
           //If you just do this it waits until the previous sentence is said
           //playSentence();
 
@@ -111,6 +123,12 @@ class Memorize extends State<MemorizeScreen> {
         }
       });
     }
+  }
+
+  void onRepeat() {
+    setState(() {
+      isOnRepeat = !isOnRepeat;
+    });
   }
 
   void onClickForward() {
@@ -119,6 +137,12 @@ class Memorize extends State<MemorizeScreen> {
         if (_currentIndex < widget.sentences.length - 1) {
           ++_currentIndex;
 
+          _items[_currentIndex - 1] = getCasualSentence(_currentIndex - 1);
+          _items[_currentIndex] = getHighlightedSentence(_currentIndex);
+          _scrollController.scrollTo(
+              index: _currentIndex,
+              duration: const Duration(milliseconds: 400));
+
           //If you just do this it waits until the previous sentence is said
           //playSentence();
 
@@ -132,67 +156,69 @@ class Memorize extends State<MemorizeScreen> {
     }
   }
 
-
-  Widget getCurrentSentences() {
-    List<Widget> children = [];
+  @override
+  void initState() {
     for (int i = 0; i < widget.sentences.length; i++) {
-      children.add(i == _currentIndex ? getHighlightedSentence(i) : getCasualSentence(i));
+      _items.add(i == _currentIndex
+          ? getHighlightedSentence(i)
+          : getCasualSentence(i));
     }
-
-    return ListView(
-      children: children
-    );
   }
 
+  Widget getCurrentSentences() {
+    return ScrollablePositionedList.separated(
+      itemScrollController: _scrollController,
+      itemCount: _items.length,
+      itemBuilder: (context, index) {
+        return _items[index];
+      },
+      separatorBuilder: (BuildContext context, int index) {
+        return Container(
+          height: 1,
+          color: CustomColors.greyBorder,
+          child: const Divider(color: CustomColors.greyBorder),
+        );
+      },
+    );
+  }
 
   Widget getCurrentSentences2() {
     if (widget.sentences.length >= 3) {
       if (_currentIndex == 0) {
-        return Column(
-            children: <Widget>[
-              getHighlightedSentence(_currentIndex),
-              getCasualSentence(_currentIndex + 1),
-              getCasualSentence(_currentIndex + 2),
-            ]
-        );
+        return Column(children: <Widget>[
+          getHighlightedSentence(_currentIndex),
+          getCasualSentence(_currentIndex + 1),
+          getCasualSentence(_currentIndex + 2),
+        ]);
       } else if (_currentIndex == widget.sentences.length - 1) {
-        return Column(
-            children: <Widget>[
-              getCasualSentence(_currentIndex - 2),
-              getCasualSentence(_currentIndex - 1),
-              getHighlightedSentence(_currentIndex),
-            ]
-        );
+        return Column(children: <Widget>[
+          getCasualSentence(_currentIndex - 2),
+          getCasualSentence(_currentIndex - 1),
+          getHighlightedSentence(_currentIndex),
+        ]);
       } else {
-        return Column(
-            children: <Widget>[
-              getCasualSentence(_currentIndex - 1),
-              getHighlightedSentence(_currentIndex),
-              getCasualSentence(_currentIndex + 1),
-            ]
-        );
+        return Column(children: <Widget>[
+          getCasualSentence(_currentIndex - 1),
+          getHighlightedSentence(_currentIndex),
+          getCasualSentence(_currentIndex + 1),
+        ]);
       }
     } else if (widget.sentences.length == 2) {
       if (_currentIndex == 0) {
-        return Column(
-            children: <Widget>[
-              getHighlightedSentence(_currentIndex),
-              getCasualSentence(_currentIndex + 1),
-            ]
-        );
+        return Column(children: <Widget>[
+          getHighlightedSentence(_currentIndex),
+          getCasualSentence(_currentIndex + 1),
+        ]);
       } else {
-        return Column(
-            children: <Widget>[
-              getCasualSentence(_currentIndex - 1),
-              getHighlightedSentence(_currentIndex),
-            ]
-        );
+        return Column(children: <Widget>[
+          getCasualSentence(_currentIndex - 1),
+          getHighlightedSentence(_currentIndex),
+        ]);
       }
     }
 
     return getHighlightedSentence(_currentIndex);
   }
-
 
   Widget getCasualSentence(int index) {
     return Container(
@@ -219,10 +245,9 @@ class Memorize extends State<MemorizeScreen> {
                     color: Color.fromRGBO(115, 129, 255, 1),
                     fontFamily: 'RobotoMono'),
               ),
-            )
+            ),
           ],
-        )
-    );
+        ));
   }
 
   Widget getHighlightedSentence(int index) {
@@ -250,7 +275,7 @@ class Memorize extends State<MemorizeScreen> {
                   color: Color.fromRGBO(34, 56, 255, 1),
                   fontFamily: 'RobotoMono'),
             ),
-          )
+          ),
         ],
       ),
     );
@@ -258,7 +283,6 @@ class Memorize extends State<MemorizeScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
@@ -278,15 +302,13 @@ class Memorize extends State<MemorizeScreen> {
         actions: [
           IconButton(
               padding: EdgeInsets.only(
-                right: MediaQuery.of(context).size.width * 0.02
-              ),
+                  right: MediaQuery.of(context).size.width * 0.02),
               onPressed: () {
                 setState(() {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>
-                          OptionsScreen(),
+                      builder: (context) => OptionsScreen(),
                     ),
                   );
                 });
@@ -299,35 +321,31 @@ class Memorize extends State<MemorizeScreen> {
         ],
       ),
       body: Padding(
-        padding: EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.02),
+        padding: EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.04),
         child: Column(
           children: <Widget>[
             Container(
               padding: EdgeInsets.only(
-                  left: MediaQuery.of(context).size.width * 0.05,
-                  right: MediaQuery.of(context).size.width * 0.05,
+                left: MediaQuery.of(context).size.width * 0.05,
+                right: MediaQuery.of(context).size.width * 0.05,
               ),
               child: Container(
                 decoration: BoxDecoration(
                   border: Border.all(
-                    color: CustomColors.blueBorder,
+                    color: CustomColors.greyBorder,
                     width: 1,
                   ),
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(20),
                 ),
                 child: Column(
                   children: <Widget>[
-
                     SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.575,
-                      child: getCurrentSentences(),
-                    ),
-
+                        height: MediaQuery.of(context).size.height * 0.55,
+                        child: getCurrentSentences()),
                     Container(
                       padding: EdgeInsets.only(
                           left: MediaQuery.of(context).size.width * 0.05,
-                          right: MediaQuery.of(context).size.width * 0.05
-                      ),
+                          right: MediaQuery.of(context).size.width * 0.05),
                       child: Row(
                         children: [
                           Expanded(
@@ -358,29 +376,35 @@ class Memorize extends State<MemorizeScreen> {
                                   color: Color.fromRGBO(0, 0, 0, 0.5),
                                 ),
                               ),
-
-
                               Container(
                                 padding: EdgeInsets.only(
-                                    top: MediaQuery.of(context).size.height * 0.01,
-                                    bottom: MediaQuery.of(context).size.height * 0.015
-                                ),
+                                    top: MediaQuery.of(context).size.height *
+                                        0.01,
+                                    bottom: MediaQuery.of(context).size.height *
+                                        0.015),
                                 child: SizedBox(
                                   height: 35,
                                   width: 70,
-                                  child: TextField(
+                                  child: TextFormField(
                                     //controller: textController,
                                     //maxLines: 10,
-                                      decoration: InputDecoration(
-                                        border: OutlineInputBorder(
-                                          borderSide: const BorderSide(color: CustomColors.blueBorder),
-                                          borderRadius: BorderRadius.circular(8),
-                                        ),
-                                        focusedBorder: OutlineInputBorder(
-                                          borderSide: const BorderSide(color: CustomColors.darkBlueBorder),
-                                          borderRadius: BorderRadius.circular(8),
-                                        ),
-                                      )
+                                    decoration: InputDecoration(
+                                      border: OutlineInputBorder(
+                                        borderSide: const BorderSide(
+                                            color: CustomColors.blueBorder),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: const BorderSide(
+                                            color: CustomColors.darkBlueBorder),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                    ),
+                                    keyboardType: TextInputType.number,
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.digitsOnly
+                                    ],
+                                    initialValue: "1",
                                   ),
                                 ),
                               )
@@ -393,67 +417,74 @@ class Memorize extends State<MemorizeScreen> {
                 ),
               ),
             ),
-
             Container(
                 padding: EdgeInsets.only(
                     top: MediaQuery.of(context).size.height * 0.04,
-                    left: MediaQuery.of(context).size.width * 0.04
-                ),
+                    right: MediaQuery.of(context).size.height * 0.04),
                 child: Row(
-                  //mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
+                    Ink(
+                      decoration: ShapeDecoration(
+                        color: Color.fromRGBO(
+                            72, 62, 168, buttonsAreActive ? 1 : 0.3),
+                        shape: const CircleBorder(),
+                      ),
+                      child: IconButton(
+                        icon: const Icon(Icons.repeat_rounded),
+                        color:
+                            isOnRepeat ? Colors.lightGreenAccent : Colors.white,
+                        onPressed: onRepeat,
+                        iconSize: 35,
+                      ),
+                    ),
                     Container(
                       padding: EdgeInsets.only(
-                          right: MediaQuery.of(context).size.width * 0.045
-                      ),
+                          left: MediaQuery.of(context).size.width * 0.05),
                       child: Ink(
                         decoration: ShapeDecoration(
-                          color: Color.fromRGBO(27, 165, 242, buttonsAreActive ? 1 : 0.3),
+                          color: Color.fromRGBO(
+                              72, 62, 168, buttonsAreActive ? 1 : 0.3),
                           shape: const CircleBorder(),
                         ),
                         child: IconButton(
-                          icon: const Icon(Icons.refresh),
+                          icon: const Icon(Icons.skip_previous_rounded),
                           color: Colors.white,
                           onPressed: onClickRewind,
-                          iconSize: 35,
+                          iconSize: 40,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 5, right: 5),
+                      child: Ink(
+                        decoration: ShapeDecoration(
+                          color: Color.fromRGBO(
+                              72, 62, 168, buttonsAreActive ? 1 : 0.3),
+                          shape: const CircleBorder(),
+                        ),
+                        child: IconButton(
+                          icon: isPlayingNow
+                              ? const Icon(Icons.pause_rounded)
+                              : const Icon(Icons.play_arrow_rounded),
+                          color: Colors.white,
+                          onPressed: onClickPlayPause,
+                          iconSize: 70,
                         ),
                       ),
                     ),
                     Ink(
                       decoration: ShapeDecoration(
-                        color: Color.fromRGBO(72, 62, 168, buttonsAreActive ? 1 : 0.3),
+                        color: Color.fromRGBO(
+                            72, 62, 168, buttonsAreActive ? 1 : 0.3),
                         shape: const CircleBorder(),
                       ),
                       child: IconButton(
-                        icon: const Icon(Icons.fast_rewind_outlined),
-                        color: Colors.white,
-                        onPressed: onClickRewind,
-                        iconSize: 50,
-                      ),
-                    ),
-                    Ink(
-                      decoration: ShapeDecoration(
-                        color: Color.fromRGBO(72, 62, 168, buttonsAreActive ? 1 : 0.3),
-                        shape: const CircleBorder(),
-                      ),
-                      child: IconButton(
-                        icon: isPlayingNow ? const Icon(Icons.pause) : const Icon(Icons.play_arrow),
-                        color: Colors.white,
-                        onPressed: onClickPlayPause,
-                        iconSize: 50,
-                      ),
-                    ),
-                    Ink(
-                      decoration: ShapeDecoration(
-                        color: Color.fromRGBO(72, 62, 168, buttonsAreActive ? 1 : 0.3),
-                        shape: const CircleBorder(),
-                      ),
-                      child: IconButton(
-                        icon: const Icon(Icons.fast_forward_outlined),
+                        icon: const Icon(Icons.skip_next_rounded),
                         color: Colors.white,
                         onPressed: onClickForward,
-                        iconSize: 50,
+                        iconSize: 40,
                       ),
                     ),
                   ],
