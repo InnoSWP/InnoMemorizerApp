@@ -46,11 +46,10 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   PDFDoc? _pdfDoc;
-  String? _pdfText;
   PlatformFile? _platformFile;
   bool _buttonEnabled = false;
   int _initialIndex = 0;
-  OverlayEntry? overlayEntry;
+
   Screen selectedScreen = Screen.pasteText;
   List<String> _sentences = [];
 
@@ -66,7 +65,6 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       _buttonEnabled = false;
       _platformFile = null;
       _pdfDoc?.deleteFile();
-      _pdfText = null;
       fileAnimationController.stop();
       fileAnimationController.reset();
     });
@@ -101,7 +99,6 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       setState(() {
         _sentences = sentences;
         fileAnimationController.fling();
-        _pdfText = text;
         _buttonEnabled = true;
       });
     });
