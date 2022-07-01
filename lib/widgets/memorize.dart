@@ -22,6 +22,9 @@ class Memorize extends State<MemorizeScreen> {
   final ItemScrollController _scrollController = ItemScrollController();
   final List<Widget> _items = [];
 
+  final repeatTextController = TextEditingController();
+
+
   Memorize() {
     /// Init Alan Button with project key from Alan Studio
     AlanVoice.addButton(
@@ -37,7 +40,19 @@ class Memorize extends State<MemorizeScreen> {
         //Therefore we don't even need to check isPlayingNow
         if (isPlayingNow && _currentIndex + 1 < widget.sentences.length) {
           setState(() {
-            ++_currentIndex;
+            if (!isOnRepeat) {
+              if (repeatTextController.text.isNotEmpty) {
+                if (amountRepeated + 1 < int.parse(repeatTextController.text)) {
+                  amountRepeated++;
+                } else {
+                  amountRepeated = 0;
+                  ++_currentIndex;
+                }
+              } else {
+                ++_currentIndex;
+              }
+            }
+            //++_currentIndex;
 
             _items[_currentIndex] = getHighlightedSentence(_currentIndex);
             _items[_currentIndex - 1] = getCasualSentence(_currentIndex - 1);
@@ -47,13 +62,32 @@ class Memorize extends State<MemorizeScreen> {
           });
           playSentence();
         }
+      } else if (command.data["command"] == "play") {
+        if (!isPlayingNow) {
+          onClickPlayPause();
+        }
+      } else if (command.data["command"] == "stop") {
+        if (isPlayingNow) {
+          onClickPlayPause();
+        }
+      } else if (command.data["command"] == "back") {
+        onClickRewind();
+      } else if (command.data["command"] == "forward") {
+        onClickForward();
       }
     });
+  }
+
+  void dispose() {
+    repeatTextController.dispose();
+    super.dispose();
   }
 
   bool isPlayingNow = false;
   bool buttonsAreActive = true;
   bool isOnRepeat = false;
+
+  int amountRepeated = 0;
 
   void onClickPlayPause() {
     if (buttonsAreActive) {
@@ -284,6 +318,7 @@ class Memorize extends State<MemorizeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         elevation: 0,
         backgroundColor: CustomColors.background,
@@ -340,7 +375,7 @@ class Memorize extends State<MemorizeScreen> {
                 child: Column(
                   children: <Widget>[
                     SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.55,
+                        height: MediaQuery.of(context).size.height * 0.52,
                         child: getCurrentSentences()),
                     Container(
                       padding: EdgeInsets.only(
@@ -385,8 +420,8 @@ class Memorize extends State<MemorizeScreen> {
                                 child: SizedBox(
                                   height: 35,
                                   width: 70,
-                                  child: TextFormField(
-                                    //controller: textController,
+                                  child: TextField(
+                                    controller: repeatTextController,
                                     //maxLines: 10,
                                     decoration: InputDecoration(
                                       border: OutlineInputBorder(
@@ -404,7 +439,7 @@ class Memorize extends State<MemorizeScreen> {
                                     inputFormatters: [
                                       FilteringTextInputFormatter.digitsOnly
                                     ],
-                                    initialValue: "1",
+                                    //initialValue: "1",
                                   ),
                                 ),
                               )
@@ -434,7 +469,7 @@ class Memorize extends State<MemorizeScreen> {
                       child: IconButton(
                         icon: const Icon(Icons.repeat_rounded),
                         color:
-                            isOnRepeat ? Colors.lightGreenAccent : Colors.white,
+                        isOnRepeat ? Colors.lightGreenAccent : Colors.white,
                         onPressed: onRepeat,
                         iconSize: 35,
                       ),
