@@ -3,8 +3,9 @@ import 'package:alan_voice/alan_voice.dart';
 import '../common/theme.dart';
 import 'dart:convert';
 import 'package:memorizer/widgets/options.dart';
-import 'package:flutter/services.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 class MemorizeScreen extends StatefulWidget {
   const MemorizeScreen({Key? key, required this.title, required this.sentences})
@@ -19,6 +20,8 @@ class MemorizeScreen extends StatefulWidget {
 
 class Memorize extends State<MemorizeScreen> {
   int _currentIndex = 0;
+  int _numberOfRepetitions = 0;
+
   final ItemScrollController _scrollController = ItemScrollController();
   final List<Widget> _items = [];
 
@@ -41,7 +44,7 @@ class Memorize extends State<MemorizeScreen> {
           setState(() {
             if (!isOnRepeat) {
               if (repeatTextController.text.isNotEmpty) {
-                if (amountRepeated + 1 < int.parse(repeatTextController.text)) {
+                if (amountRepeated + 1 < _numberOfRepetitions) {
                   amountRepeated++;
                 } else {
                   amountRepeated = 0;
@@ -191,6 +194,8 @@ class Memorize extends State<MemorizeScreen> {
 
   @override
   void initState() {
+    super.initState();
+    loadNumberOfRepetitions();
     for (int i = 0; i < widget.sentences.length; i++) {
       _items.add(i == _currentIndex
           ? getHighlightedSentence(i)
@@ -342,7 +347,7 @@ class Memorize extends State<MemorizeScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => OptionsScreen(),
+                      builder: (context) => const OptionsScreen(),
                     ),
                   );
                 });
@@ -400,7 +405,9 @@ class Memorize extends State<MemorizeScreen> {
                           ),
                         ),
                         IconButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            onRepeat();
+                          },
                           icon: const Icon(
                             Icons.repeat_rounded,
                             size: 34,
@@ -473,5 +480,12 @@ class Memorize extends State<MemorizeScreen> {
         ),
       ),
     );
+  }
+
+  void loadNumberOfRepetitions() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _numberOfRepetitions = (prefs.getInt('numberOfRepetitions') ?? 1);
+    });
   }
 }
