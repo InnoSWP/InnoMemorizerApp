@@ -50,7 +50,9 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   PlatformFile? _platformFile;
   bool _buttonEnabled = false;
   int _initialIndex = 0;
+  OverlayEntry? overlayEntry;
   Screen selectedScreen = Screen.pasteText;
+  List<String> _sentences = [];
 
   late AnimationController fileAnimationController;
   late AnimationController animationController;
@@ -95,22 +97,23 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     });
     String text = await _pdfDoc!.text;
 
-    setState(() {
-      fileAnimationController.fling();
-      _pdfText = text;
-      _buttonEnabled = true;
+    fetchSentences(text).then((sentences) {
+      setState(() {
+        _sentences = sentences;
+        fileAnimationController.fling();
+        _pdfText = text;
+        _buttonEnabled = true;
+      });
     });
   }
 
   void _sendText() async {
-    await _fetchPDF();
-    var sentences = await fetchSentences(_pdfText!);
     setState(() {
       Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) =>
-              MemorizeScreen(title: 'Memorize', sentences: sentences),
+              MemorizeScreen(title: 'Memorize', sentences: _sentences),
         ),
       );
       clearUploadedFile();
@@ -118,158 +121,170 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   }
 
   Widget getUploadScreen() {
-    return Column(
+    return Stack(
+      alignment: Alignment.center,
       children: <Widget>[
-        Padding(
-          padding: EdgeInsets.only(
-            left: MediaQuery.of(context).size.width * 0.1,
-            right: MediaQuery.of(context).size.width * 0.1,
-            bottom: MediaQuery.of(context).size.height * 0.05,
-          ),
-          child: InkWell(
-            onTap: _pickPDF,
-            child: DottedBorder(
-              borderType: BorderType.RRect,
-              radius: const Radius.circular(4),
-              dashPattern: const [10, 4],
-              strokeCap: StrokeCap.round,
-              color: const Color.fromRGBO(56, 78, 183, 0.3),
-              child: ClipRRect(
-                borderRadius: const BorderRadius.all(Radius.circular(4)),
-                child: Container(
-                    height: 350,
-                    color: const Color.fromRGBO(248, 248, 255, 1),
-                    child: Center(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Container(
+        Positioned(
+          width: MediaQuery.of(context).size.width,
+          top: MediaQuery.of(context).size.height * 0.02,
+          child: Padding(
+            padding: EdgeInsets.only(
+              left: MediaQuery.of(context).size.width * 0.1,
+              right: MediaQuery.of(context).size.width * 0.1,
+              bottom: MediaQuery.of(context).size.height * 0.05,
+            ),
+            child: InkWell(
+              onTap: _pickPDF,
+              child: DottedBorder(
+                borderType: BorderType.RRect,
+                radius: const Radius.circular(4),
+                dashPattern: const [10, 4],
+                strokeCap: StrokeCap.round,
+                color: const Color.fromRGBO(56, 78, 183, 0.3),
+                child: ClipRRect(
+                  borderRadius: const BorderRadius.all(Radius.circular(4)),
+                  child: Container(
+                      height: 350,
+                      color: const Color.fromRGBO(248, 248, 255, 1),
+                      child: Center(
+                          child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            padding: EdgeInsets.only(
+                                bottom:
+                                    MediaQuery.of(context).size.height * 0.04),
+                            child: const Image(
+                                image: AssetImage('assets/images/upload.png')),
+                          ),
+                          Container(
                               padding: EdgeInsets.only(
-                                  bottom:
-                                  MediaQuery.of(context).size.height * 0.04),
-                              child: const Image(
-                                  image: AssetImage('assets/images/upload.png')),
-                            ),
-                            Container(
-                                padding: EdgeInsets.only(
-                                    bottom:
-                                    MediaQuery.of(context).size.height * 0.015),
-                                child: const Text(
-                                  'Browse files',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 22,
-                                    color: Color(0xFF483EA8),
-                                    decoration: TextDecoration.underline,
-                                  ),
-                                )),
-                            Container(
-                              padding: EdgeInsets.only(
-                                  bottom:
-                                  MediaQuery.of(context).size.height * 0.02),
+                                  bottom: MediaQuery.of(context).size.height *
+                                      0.015),
                               child: const Text(
-                                'Supported format: PDF',
+                                'Browse files',
                                 style: TextStyle(
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 18,
-                                  color: Color.fromRGBO(0, 0, 0, 0.5),
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 22,
+                                  color: Color(0xFF483EA8),
+                                  decoration: TextDecoration.underline,
                                 ),
+                              )),
+                          Container(
+                            padding: EdgeInsets.only(
+                                bottom:
+                                    MediaQuery.of(context).size.height * 0.02),
+                            child: const Text(
+                              'Supported format: PDF',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w400,
+                                fontSize: 18,
+                                color: Color.fromRGBO(0, 0, 0, 0.5),
                               ),
-                            )
-                          ],
-                        ))),
+                            ),
+                          )
+                        ],
+                      ))),
+                ),
               ),
             ),
           ),
         ),
         _platformFile != null
-            ? Container(
-            padding: const EdgeInsets.only(left: 30, right: 30),
-            child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('Uploading...',
+            ? Padding(
+                padding: EdgeInsets.only(
+                    top: MediaQuery.of(context).size.height * 0.52),
+                child: Container(
+                    padding: const EdgeInsets.only(left: 30, right: 30),
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text('Uploading...',
+                              style: TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.w700,
+                                color: CustomColors.greyText,
+                              )),
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          TextField(
+                            readOnly: true,
+                            decoration: InputDecoration(
+                              hintText: _platformFile!.name,
+                              suffixIcon: IconButton(
+                                icon: const Icon(Icons.remove_circle_outlined),
+                                color: const Color.fromRGBO(230, 230, 230, 1),
+                                onPressed: () {
+                                  clearUploadedFile();
+                                },
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(4.0),
+                                borderSide: const BorderSide(
+                                  color: Color.fromRGBO(227, 227, 227, 1),
+                                  width: 1,
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(4.0),
+                                borderSide: const BorderSide(
+                                  color: Color.fromRGBO(227, 227, 227, 1),
+                                  width: 1,
+                                ),
+                              ),
+                            ),
+                          ),
+                          Container(
+                              height: 2,
+                              clipBehavior: Clip.hardEdge,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                color: CustomColors.primary,
+                              ),
+                              child: LinearProgressIndicator(
+                                value: fileAnimationController.value,
+                                valueColor: const AlwaysStoppedAnimation<Color>(
+                                    CustomColors.primary),
+                                backgroundColor: Colors.white,
+                              )),
+                        ])),
+              )
+            : Container(),
+        Positioned(
+          bottom: MediaQuery.of(context).size.height * 0.05,
+          child: Padding(
+            padding:
+                EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.07),
+            child: SizedBox(
+              width: MediaQuery.of(context).size.width * 0.9,
+              height: MediaQuery.of(context).size.height * 0.06,
+              child: ElevatedButton(
+                  onPressed: _buttonEnabled ? _sendText : null,
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.resolveWith<Color?>(
+                      (Set<MaterialState> states) {
+                        if (states.contains(MaterialState.pressed)) {
+                          return CustomColors.primary.withOpacity(0.5);
+                        } else if (states.contains(MaterialState.disabled)) {
+                          return CustomColors.primary.withOpacity(0.3);
+                        }
+                        return CustomColors.primary;
+                      },
+                    ),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4.0),
+                      ),
+                    ),
+                  ),
+                  child: const Text('START MEMORIZE',
                       style: TextStyle(
+                        color: Colors.white,
                         fontSize: 22,
                         fontWeight: FontWeight.w700,
-                        color: CustomColors.greyText,
-                      )),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  TextField(
-                    readOnly: true,
-                    decoration: InputDecoration(
-                      hintText: _platformFile!.name,
-                      suffixIcon: IconButton(
-                        icon: const Icon(Icons.remove_circle_outlined),
-                        color: const Color.fromRGBO(230, 230, 230, 1),
-                        onPressed: () {
-                          clearUploadedFile();
-                        },
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(4.0),
-                        borderSide: const BorderSide(
-                          color: Color.fromRGBO(227, 227, 227, 1),
-                          width: 1,
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(4.0),
-                        borderSide: const BorderSide(
-                          color: Color.fromRGBO(227, 227, 227, 1),
-                          width: 1,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Container(
-                      height: 2,
-                      clipBehavior: Clip.hardEdge,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        color: CustomColors.primary,
-                      ),
-                      child: LinearProgressIndicator(
-                        value: fileAnimationController.value,
-                        valueColor: const AlwaysStoppedAnimation<Color>(
-                            CustomColors.primary),
-                        backgroundColor: Colors.white,
-                      )),
-                ]))
-            : Container(),
-        Padding(
-          padding:
-          EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.07),
-          child: SizedBox(
-            width: MediaQuery.of(context).size.width * 0.9,
-            height: MediaQuery.of(context).size.height * 0.06,
-            child: ElevatedButton(
-                onPressed: _buttonEnabled ? _sendText : null,
-                style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.resolveWith<Color?>(
-                        (Set<MaterialState> states) {
-                      if (states.contains(MaterialState.pressed)) {
-                        return CustomColors.primary.withOpacity(0.5);
-                      } else if (states.contains(MaterialState.disabled)) {
-                        return CustomColors.primary.withOpacity(0.3);
-                      }
-                      return CustomColors.primary;
-                    },
-                  ),
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(4.0),
-                    ),
-                  ),
-                ),
-                child: const Text('START MEMORIZE',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 22,
-                      fontWeight: FontWeight.w700,
-                    ))),
+                      ))),
+            ),
           ),
         )
       ],
@@ -291,15 +306,15 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       vsync: this,
       duration: const Duration(seconds: 3),
     )..addListener(() {
-      setState(() {});
-    });
+        setState(() {});
+      });
 
     fileAnimationController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 6),
+      duration: const Duration(seconds: 12),
     )..addListener(() {
-      setState(() {});
-    });
+        setState(() {});
+      });
 
     super.initState();
   }
@@ -316,16 +331,11 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: null,
-      body: Column(
+      body: Stack(
+        alignment: Alignment.center,
         children: <Widget>[
-          Padding(
-            padding: EdgeInsets.fromLTRB(
-              0,
-              MediaQuery.of(context).size.height * 0.075,
-              0,
-              MediaQuery.of(context).size.height * 0.05,
-            ),
+          Positioned(
+            top: MediaQuery.of(context).size.height * 0.075,
             child: ToggleSwitch(
               minWidth: MediaQuery.of(context).size.width * 0.34,
               minHeight: MediaQuery.of(context).size.height * 0.04,
@@ -375,7 +385,12 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
               },
             ),
           ),
-          getCurrentScreen(context),
+          Positioned(
+              bottom: 0,
+              child: SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height * 0.85,
+                  child: getCurrentScreen(context))),
         ],
       ),
     );

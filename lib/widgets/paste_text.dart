@@ -5,15 +5,14 @@ import '/../utils/sentences_parser.dart';
 import '/../common/theme.dart';
 
 Widget getPasteTextScreen(context, textController, animationController) {
-
   return SingleChildScrollView(
-    child: Column(
+    child: Stack(
+      alignment: Alignment.center,
+      fit: StackFit.loose,
       children: <Widget>[
-        Padding(
-          padding: EdgeInsets.only(
-            left: MediaQuery.of(context).size.width * 0.14,
-            bottom: MediaQuery.of(context).size.height * 0.009,
-          ),
+        Positioned(
+          top: MediaQuery.of(context).size.height * 0.025,
+          left: MediaQuery.of(context).size.width * 0.14,
           child: Align(
             alignment: Alignment.centerLeft,
             child: RichText(
@@ -39,37 +38,37 @@ Widget getPasteTextScreen(context, textController, animationController) {
             ),
           ),
         ),
-        Padding(
-          padding: EdgeInsets.fromLTRB(
-            MediaQuery.of(context).size.width * 0.1,
-            0,
-            MediaQuery.of(context).size.width * 0.1,
-            MediaQuery.of(context).size.height * 0.1,
-          ),
-          child: SizedBox(
-            height: MediaQuery.of(context).size.height * 0.4,
-            child: TextField(
-                controller: textController,
-                maxLines: 32,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderSide:
-                    const BorderSide(color: CustomColors.blueBorder),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide:
-                    const BorderSide(color: CustomColors.darkBlueBorder),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  hintText: 'Type or paste your text here...',
-                  prefixText: ' ',
-                )),
+        Positioned(
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(
+              MediaQuery.of(context).size.width * 0.1,
+              MediaQuery.of(context).size.height * 0.07,
+              MediaQuery.of(context).size.width * 0.1,
+              MediaQuery.of(context).size.height * 0.33,
+            ),
+            child: SizedBox(
+              height: MediaQuery.of(context).size.height * 0.4,
+              width: MediaQuery.of(context).size.width * 0.8,
+              child: TextField(
+                  controller: textController,
+                  maxLines: 32,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderSide:
+                          const BorderSide(color: CustomColors.blueBorder),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide:
+                          const BorderSide(color: CustomColors.darkBlueBorder),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    hintText: 'Type or paste your text here...',
+                    prefixText: ' ',
+                  )),
+            ),
           ),
         ),
-
-
-
         Visibility(
             maintainSize: true,
             maintainAnimation: true,
@@ -79,6 +78,7 @@ Widget getPasteTextScreen(context, textController, animationController) {
               children: [
                 Padding(
                   padding: EdgeInsets.only(
+                    top: MediaQuery.of(context).size.height * 0.35,
                     left: MediaQuery.of(context).size.width * 0.12,
                     bottom: MediaQuery.of(context).size.height * 0.0236,
                   ),
@@ -106,74 +106,64 @@ Widget getPasteTextScreen(context, textController, animationController) {
                     ),
                   ),
                 ),
-                Text(
-                    "${(animationController.value * 100).round()}% completed",
+                Text("${(animationController.value * 100).round()}% completed",
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w500,
                       color: CustomColors.primary.withOpacity(0.5),
                     )),
               ],
-            )
-        ),
-        Padding(
-          padding:
-          EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.03),
-          child: SizedBox(
-            width: MediaQuery.of(context).size.width * 0.9,
-            height: MediaQuery.of(context).size.height * 0.06,
-            child: ValueListenableBuilder<TextEditingValue>(
-              valueListenable: textController,
-              builder: (context, value, child) {
-                return ElevatedButton(
-                    onPressed: value.text.isNotEmpty
-                        ? () {
-                      animationController.forward();
-                      fetchSentences(value.text)
-                          .then((sentences) {
-                        while (animationController.status !=
-                            AnimationStatus.completed) {
-                          animationController.value += 0.01;
-                          Future.delayed(
-                              const Duration(milliseconds: 200));
+            )),
+        AnimatedPositioned(
+          bottom: MediaQuery.of(context).viewInsets.bottom * 0.9,
+          width: MediaQuery.of(context).size.width * 0.9,
+          height: MediaQuery.of(context).size.height * 0.06,
+          duration: const Duration(milliseconds: 150),
+          child: ValueListenableBuilder<TextEditingValue>(
+            valueListenable: textController,
+            builder: (context, value, child) {
+              return ElevatedButton(
+                  onPressed: value.text.isNotEmpty
+                      ? () {
+                          FocusManager.instance.primaryFocus?.unfocus();
+                          animationController.forward();
+                          fetchSentences(value.text).then((sentences) {
+                            animationController.fling();
+                            animationController.reset();
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => MemorizeScreen(
+                                    title: 'Memorize', sentences: sentences),
+                              ),
+                            );
+                          });
                         }
-                        animationController.reset();
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => MemorizeScreen(
-                                title: 'Memorize', sentences: sentences),
-                          ),
-                        );
-                      });
-                    }
-                        : null,
-                    style: ButtonStyle(
-                      backgroundColor:
-                      MaterialStateProperty.resolveWith<Color?>(
-                            (Set<MaterialState> states) {
-                          if (states.contains(MaterialState.pressed)) {
-                            return CustomColors.primary.withOpacity(0.5);
-                          } else if (states.contains(MaterialState.disabled)) {
-                            return CustomColors.primary.withOpacity(0.3);
-                          }
-                          return CustomColors.primary;
-                        },
-                      ),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(4.0),
-                        ),
+                      : null,
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.resolveWith<Color?>(
+                      (Set<MaterialState> states) {
+                        if (states.contains(MaterialState.pressed)) {
+                          return CustomColors.primary.withOpacity(0.5);
+                        } else if (states.contains(MaterialState.disabled)) {
+                          return CustomColors.primary.withOpacity(0.3);
+                        }
+                        return CustomColors.primary;
+                      },
+                    ),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4.0),
                       ),
                     ),
-                    child: const Text('START MEMORIZE',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 22,
-                          fontWeight: FontWeight.w700,
-                        )));
-              },
-            ),
+                  ),
+                  child: const Text('START MEMORIZE',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 22,
+                        fontWeight: FontWeight.w700,
+                      )));
+            },
           ),
         )
       ],
