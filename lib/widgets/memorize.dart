@@ -6,7 +6,6 @@ import 'package:memorizer/widgets/options.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 class MemorizeScreen extends StatefulWidget {
   const MemorizeScreen({Key? key, required this.title, required this.sentences})
       : super(key: key);
@@ -40,21 +39,17 @@ class Memorize extends State<MemorizeScreen> {
         //This will not fire if Alan is disabled
 
         //Therefore we don't even need to check isPlayingNow
-        if (isPlayingNow && _currentIndex + 1 < widget.sentences.length) {
+        if (_currentIndex + 1 < widget.sentences.length) {
           setState(() {
-            if (!isOnRepeat) {
-              if (repeatTextController.text.isNotEmpty) {
-                if (amountRepeated + 1 < _numberOfRepetitions) {
-                  amountRepeated++;
-                } else {
-                  amountRepeated = 0;
-                  ++_currentIndex;
-                }
+            if (isOnRepeat) {
+              if (amountRepeated + 1 < _numberOfRepetitions) {
+                ++amountRepeated;
               } else {
-                ++_currentIndex;
+                onRepeat();
               }
+            } else {
+              ++_currentIndex;
             }
-            //++_currentIndex;
 
             _items[_currentIndex] = getHighlightedSentence(_currentIndex);
             _items[_currentIndex - 1] = getCasualSentence(_currentIndex - 1);
@@ -80,6 +75,7 @@ class Memorize extends State<MemorizeScreen> {
     });
   }
 
+  @override
   void dispose() {
     repeatTextController.dispose();
     super.dispose();
@@ -162,8 +158,10 @@ class Memorize extends State<MemorizeScreen> {
   }
 
   void onRepeat() {
+    amountRepeated = 0;
     setState(() {
       isOnRepeat = !isOnRepeat;
+      loadNumberOfRepetitions();
     });
   }
 
