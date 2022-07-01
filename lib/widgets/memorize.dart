@@ -372,7 +372,7 @@ class Memorize extends State<MemorizeScreen> {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.45,
+                    height: MediaQuery.of(context).size.height * 0.47,
                     child: getCurrentSentences()),
               ),
             ),
@@ -382,15 +382,11 @@ class Memorize extends State<MemorizeScreen> {
                 right: MediaQuery.of(context).size.width * 0.05,
               ),
               child: Container(
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: CustomColors.greyBorder,
-                    width: 1,
-                  ),
-                  borderRadius: BorderRadius.circular(20),
-                ),
+                padding: EdgeInsets.only(
+                    left: MediaQuery.of(context).size.width * 0.05,
+                    right: MediaQuery.of(context).size.width * 0.05),
                 child: SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.08,
+                    height: MediaQuery.of(context).size.height * 0.10,
                     child: Row(
                       children: [
                         Expanded(
@@ -403,6 +399,14 @@ class Memorize extends State<MemorizeScreen> {
                             ),
                           ),
                         ),
+                        IconButton(
+                          onPressed: () {},
+                          icon: const Icon(
+                            Icons.repeat_rounded,
+                            size: 34,
+                          ),
+                          color: const Color.fromRGBO(0, 0, 0, 0.5),
+                        )
                       ],
                     )),
               ),
@@ -415,20 +419,6 @@ class Memorize extends State<MemorizeScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Ink(
-                      decoration: ShapeDecoration(
-                        color: Color.fromRGBO(
-                            72, 62, 168, buttonsAreActive ? 1 : 0.3),
-                        shape: const CircleBorder(),
-                      ),
-                      child: IconButton(
-                        icon: const Icon(Icons.repeat_rounded),
-                        color:
-                            isOnRepeat ? Colors.lightGreenAccent : Colors.white,
-                        onPressed: onRepeat,
-                        iconSize: 35,
-                      ),
-                    ),
                     Container(
                       padding: EdgeInsets.only(
                           left: MediaQuery.of(context).size.width * 0.05),
