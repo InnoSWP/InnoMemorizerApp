@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:toggle_switch/toggle_switch.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '/widgets/upload.dart';
 import '/widgets/paste_text.dart';
@@ -16,6 +17,9 @@ class MemorizationApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    SharedPreferences.getInstance()
+        .then((prefs) => prefs.setInt('numberOfRepetitions', 1));
+
     return MaterialApp(
       theme: ThemeData(
         primaryColor: CustomColors.primary,

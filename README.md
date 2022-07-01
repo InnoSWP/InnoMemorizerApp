@@ -33,6 +33,7 @@ The memorizing page shows title of the text and three sentences: previous, curre
 ___
 ## 🔭 Used packages, libraries and APIs
 - flutter/material
+- flutter/services
 - dio/dio
 - alan_voice/alan_voice
 - dart/convert
@@ -40,6 +41,7 @@ ___
 - pdf_text/pdf_text
 - file_picker/file_picker
 - dotted_border/dotted_border
+- shared_preferences/shared_preferences
 
 ___
 ## Features

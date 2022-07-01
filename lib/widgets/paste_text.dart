@@ -35,7 +35,7 @@ class Type extends State<TypeScreen> with TickerProviderStateMixin {
                     text: "Input text",
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
-                      fontSize: 20,
+                      fontSize: 30,
                       color: CustomColors.blackText,
                     ),
                   ),
@@ -63,22 +63,24 @@ class Type extends State<TypeScreen> with TickerProviderStateMixin {
                 height: MediaQuery.of(context).size.height * 0.4,
                 width: MediaQuery.of(context).size.width * 0.8,
                 child: TextField(
-                    controller: textController,
-                    maxLines: 32,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderSide:
-                            const BorderSide(color: CustomColors.blueBorder),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(
-                            color: CustomColors.darkBlueBorder),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      hintText: 'Type or paste your text here...',
-                      prefixText: ' ',
-                    )),
+                  controller: textController,
+                  maxLines: 32,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderSide:
+                          const BorderSide(color: CustomColors.blueBorder),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide:
+                          const BorderSide(color: CustomColors.darkBlueBorder),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    hintText: 'Type or paste your text here...',
+                    prefixText: ' ',
+                  ),
+                  style: const TextStyle(fontSize: 22),
+                ),
               ),
             ),
           ),
