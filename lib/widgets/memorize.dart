@@ -24,7 +24,6 @@ class Memorize extends State<MemorizeScreen> {
 
   final repeatTextController = TextEditingController();
 
-
   Memorize() {
     /// Init Alan Button with project key from Alan Studio
     AlanVoice.addButton(
@@ -372,84 +371,40 @@ class Memorize extends State<MemorizeScreen> {
                   ),
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: Column(
-                  children: <Widget>[
-                    SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.52,
-                        child: getCurrentSentences()),
-                    Container(
-                      padding: EdgeInsets.only(
-                          left: MediaQuery.of(context).size.width * 0.05,
-                          right: MediaQuery.of(context).size.width * 0.05),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              '${_currentIndex + 1}/${widget.sentences.length} complete',
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w500,
-                                fontSize: 24,
-                                color: Color.fromRGBO(0, 0, 0, 0.5),
-                              ),
+                child: SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.45,
+                    child: getCurrentSentences()),
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.only(
+                left: MediaQuery.of(context).size.width * 0.05,
+                right: MediaQuery.of(context).size.width * 0.05,
+              ),
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: CustomColors.greyBorder,
+                    width: 1,
+                  ),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.08,
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            '${_currentIndex + 1}/${widget.sentences.length} complete',
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 24,
+                              color: Color.fromRGBO(0, 0, 0, 0.5),
                             ),
                           ),
-                          Column(
-                            children: [
-                              const Text(
-                                'Repeat',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 22,
-                                  color: Color.fromRGBO(0, 0, 0, 0.5),
-                                ),
-                              ),
-                              const Text(
-                                'amount',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 22,
-                                  color: Color.fromRGBO(0, 0, 0, 0.5),
-                                ),
-                              ),
-                              Container(
-                                padding: EdgeInsets.only(
-                                    top: MediaQuery.of(context).size.height *
-                                        0.01,
-                                    bottom: MediaQuery.of(context).size.height *
-                                        0.015),
-                                child: SizedBox(
-                                  height: 35,
-                                  width: 70,
-                                  child: TextField(
-                                    controller: repeatTextController,
-                                    //maxLines: 10,
-                                    decoration: InputDecoration(
-                                      border: OutlineInputBorder(
-                                        borderSide: const BorderSide(
-                                            color: CustomColors.blueBorder),
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderSide: const BorderSide(
-                                            color: CustomColors.darkBlueBorder),
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                    ),
-                                    keyboardType: TextInputType.number,
-                                    inputFormatters: [
-                                      FilteringTextInputFormatter.digitsOnly
-                                    ],
-                                    //initialValue: "1",
-                                  ),
-                                ),
-                              )
-                            ],
-                          )
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+                        ),
+                      ],
+                    )),
               ),
             ),
             Container(
@@ -469,7 +424,7 @@ class Memorize extends State<MemorizeScreen> {
                       child: IconButton(
                         icon: const Icon(Icons.repeat_rounded),
                         color:
-                        isOnRepeat ? Colors.lightGreenAccent : Colors.white,
+                            isOnRepeat ? Colors.lightGreenAccent : Colors.white,
                         onPressed: onRepeat,
                         iconSize: 35,
                       ),
