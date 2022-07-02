@@ -17,16 +17,20 @@ ___
 ## 🏠 Pages
 
 ### 📤 Upload page
-Home page provides opportunity to choose one of two options to share certain text for the memorizing process with the app: it is possible to do it through the uploading text with clicking on the right top button with the word `Upload` then go to the square with the title `browse files` click on it and eventually upload the text on PDF format. Push `Start memorize` and enjoy the process.\
+Home page provides opportunity to choose one of two options to share certain text for the memorizing process with the app: it is possible to do it through the uploading text with clicking on the right top button with the word `Upload` then go to the square with the title `browse files` click on it and eventually upload the text on PDF format. Push `Start memorize` and enjoy the process.
+
 <img src="assets/screens/upload.png" alt="upload page" width="200"/>
 
 ### 📥 Type page 
-Also it is possible to paste text by yourself. For that option it is needed to click on the left top button on the home page. Then go to the `Input text` spot and write certain text. After that and pushing the button `Start memorizing` app will do parsing and start the expected process.\
+Also it is possible to paste text by yourself. For that option it is needed to click on the left top button on the home page. Then go to the `Input text` spot and write certain text. After that and pushing the button `Start memorizing` app will do parsing and start the expected process.
+
 <img src="assets/screens/paste.png" alt="type page" width="200"/>
 
 ## ✨ Memorizing page
-The memorizing page shows title of the text and three sentences: previous, current, and next for convenient navigation. Using buttons on the bottom it is possible to sound current sentence several time, go back to the previous one, and go further by one sentence.\
+The memorizing page shows title of the text and three sentences: previous, current, and next for convenient navigation. Using buttons on the bottom it is possible to sound current sentence several time, go back to the previous one, and go further by one sentence.
+
 <img src="assets/screens/memorize.png" alt="memorizing page" width="200"/>
+
 ___
 ## 🔭 Used packages, libraries and APIs
 - flutter/material
@@ -41,7 +45,7 @@ ___
 - shared_preferences/shared_preferences
 
 ___
-## Features
+## ✨ Features
 
 | Feature                                       | Supported | 
 |-----------------------------------------------|:---------:|
