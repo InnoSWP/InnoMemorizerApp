@@ -64,4 +64,4 @@ ___
 ___
 ## Donate
 
-<a href="https://www.buymeacoffeed.com/timurx4041" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="82" width="348"></a>
+<a href="https://www.buymeacoffee.com/timurx4041" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="82" width="348"></a>
