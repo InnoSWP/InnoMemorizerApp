@@ -145,7 +145,7 @@ class Upload extends State<UploadScreen> with TickerProviderStateMixin {
                                 'Browse files',
                                 style: TextStyle(
                                   fontWeight: FontWeight.w700,
-                                  fontSize: 22,
+                                  fontSize: 24,
                                   color: Color(0xFF483EA8),
                                   decoration: TextDecoration.underline,
                                 ),
@@ -158,7 +158,7 @@ class Upload extends State<UploadScreen> with TickerProviderStateMixin {
                               'Supported format: PDF',
                               style: TextStyle(
                                 fontWeight: FontWeight.w400,
-                                fontSize: 18,
+                                fontSize: 20,
                                 color: Color.fromRGBO(0, 0, 0, 0.5),
                               ),
                             ),
@@ -181,7 +181,7 @@ class Upload extends State<UploadScreen> with TickerProviderStateMixin {
                         children: [
                           const Text('Uploading...',
                               style: TextStyle(
-                                fontSize: 22,
+                                fontSize: 24,
                                 fontWeight: FontWeight.w700,
                                 color: CustomColors.greyText,
                               )),
@@ -261,7 +261,7 @@ class Upload extends State<UploadScreen> with TickerProviderStateMixin {
                   child: const Text('START MEMORIZE',
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 22,
+                        fontSize: 24,
                         fontWeight: FontWeight.w700,
                       ))),
             ),

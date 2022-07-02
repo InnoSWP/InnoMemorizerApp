@@ -24,7 +24,7 @@ class Type extends State<TypeScreen> with TickerProviderStateMixin {
         fit: StackFit.loose,
         children: <Widget>[
           Positioned(
-            top: MediaQuery.of(context).size.height * 0.025,
+            top: MediaQuery.of(context).size.height * 0.02,
             left: MediaQuery.of(context).size.width * 0.14,
             child: Align(
               alignment: Alignment.centerLeft,
@@ -35,7 +35,7 @@ class Type extends State<TypeScreen> with TickerProviderStateMixin {
                     text: "Input text",
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
-                      fontSize: 30,
+                      fontSize: 26,
                       color: CustomColors.blackText,
                     ),
                   ),
@@ -43,7 +43,7 @@ class Type extends State<TypeScreen> with TickerProviderStateMixin {
                     text: "*",
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
-                      fontSize: 20,
+                      fontSize: 26,
                       color: CustomColors.error,
                     ),
                   ),
@@ -101,7 +101,7 @@ class Type extends State<TypeScreen> with TickerProviderStateMixin {
                       alignment: Alignment.centerLeft,
                       child: Text('Parsing...',
                           style: TextStyle(
-                            fontSize: 22,
+                            fontSize: 27,
                             fontWeight: FontWeight.w700,
                             color: CustomColors.greyText,
                           )),
@@ -124,7 +124,7 @@ class Type extends State<TypeScreen> with TickerProviderStateMixin {
                   Text(
                       "${(animationController.value * 100).round()}% completed",
                       style: TextStyle(
-                        fontSize: 20,
+                        fontSize: 24,
                         fontWeight: FontWeight.w500,
                         color: CustomColors.primary.withOpacity(0.5),
                       )),
@@ -177,7 +177,7 @@ class Type extends State<TypeScreen> with TickerProviderStateMixin {
                     child: const Text('START MEMORIZE',
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 22,
+                          fontSize: 24,
                           fontWeight: FontWeight.w700,
                         )));
               },

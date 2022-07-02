@@ -9,7 +9,7 @@ void main() {
   // with widgets in the test environment.
   testWidgets('App can go forward and backward preserving functionality', (tester) async {
     // Create the widget by telling the tester to build it.
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(const MemorizationApp());
 
     await tester.enterText(find.byType(TextField), "Yeah, I'm gonna take my horse to the old town road. I'm gonna ride 'til I can't no more. I'm gonna take my horse to the old town road. I'm gonna ride (Kio, Kio) 'til I can't no more. I got the horses in the back. Horse tack is attached. Hat is matte black. Got the boots that's black to match.");
     await tester.tap(find.byType(ElevatedButton));

@@ -17,7 +17,7 @@ class _OptionsScreenState extends State<OptionsScreen> {
 
   var _numberOfRepetitions = 1;
 
-  TextEditingController _repetitionsController = TextEditingController();
+  final TextEditingController _repetitionsController = TextEditingController();
 
   @override
   void initState() {

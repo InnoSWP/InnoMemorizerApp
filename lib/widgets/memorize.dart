@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:alan_voice/alan_voice.dart';
-import '../common/theme.dart';
-import 'dart:convert';
-import 'package:memorizer/widgets/options.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
+
+import '/../widgets/options.dart';
+import '/../common/theme.dart';
 
 class MemorizeScreen extends StatefulWidget {
   const MemorizeScreen({Key? key, required this.title, required this.sentences})
@@ -218,43 +219,43 @@ class Memorize extends State<MemorizeScreen> {
     );
   }
 
-  Widget getCurrentSentences2() {
-    if (widget.sentences.length >= 3) {
-      if (_currentIndex == 0) {
-        return Column(children: <Widget>[
-          getHighlightedSentence(_currentIndex),
-          getCasualSentence(_currentIndex + 1),
-          getCasualSentence(_currentIndex + 2),
-        ]);
-      } else if (_currentIndex == widget.sentences.length - 1) {
-        return Column(children: <Widget>[
-          getCasualSentence(_currentIndex - 2),
-          getCasualSentence(_currentIndex - 1),
-          getHighlightedSentence(_currentIndex),
-        ]);
-      } else {
-        return Column(children: <Widget>[
-          getCasualSentence(_currentIndex - 1),
-          getHighlightedSentence(_currentIndex),
-          getCasualSentence(_currentIndex + 1),
-        ]);
-      }
-    } else if (widget.sentences.length == 2) {
-      if (_currentIndex == 0) {
-        return Column(children: <Widget>[
-          getHighlightedSentence(_currentIndex),
-          getCasualSentence(_currentIndex + 1),
-        ]);
-      } else {
-        return Column(children: <Widget>[
-          getCasualSentence(_currentIndex - 1),
-          getHighlightedSentence(_currentIndex),
-        ]);
-      }
-    }
-
-    return getHighlightedSentence(_currentIndex);
-  }
+  // Widget getCurrentSentences2() {
+  //   if (widget.sentences.length >= 3) {
+  //     if (_currentIndex == 0) {
+  //       return Column(children: <Widget>[
+  //         getHighlightedSentence(_currentIndex),
+  //         getCasualSentence(_currentIndex + 1),
+  //         getCasualSentence(_currentIndex + 2),
+  //       ]);
+  //     } else if (_currentIndex == widget.sentences.length - 1) {
+  //       return Column(children: <Widget>[
+  //         getCasualSentence(_currentIndex - 2),
+  //         getCasualSentence(_currentIndex - 1),
+  //         getHighlightedSentence(_currentIndex),
+  //       ]);
+  //     } else {
+  //       return Column(children: <Widget>[
+  //         getCasualSentence(_currentIndex - 1),
+  //         getHighlightedSentence(_currentIndex),
+  //         getCasualSentence(_currentIndex + 1),
+  //       ]);
+  //     }
+  //   } else if (widget.sentences.length == 2) {
+  //     if (_currentIndex == 0) {
+  //       return Column(children: <Widget>[
+  //         getHighlightedSentence(_currentIndex),
+  //         getCasualSentence(_currentIndex + 1),
+  //       ]);
+  //     } else {
+  //       return Column(children: <Widget>[
+  //         getCasualSentence(_currentIndex - 1),
+  //         getHighlightedSentence(_currentIndex),
+  //       ]);
+  //     }
+  //   }
+  //
+  //   return getHighlightedSentence(_currentIndex);
+  // }
 
   Widget getCasualSentence(int index) {
     return Container(
@@ -358,7 +359,7 @@ class Memorize extends State<MemorizeScreen> {
         ],
       ),
       body: Padding(
-        padding: EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.04),
+        padding: EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.05),
         child: Column(
           children: <Widget>[
             Container(
@@ -375,7 +376,7 @@ class Memorize extends State<MemorizeScreen> {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.47,
+                    height: MediaQuery.of(context).size.height * 0.55,
                     child: getCurrentSentences()),
               ),
             ),
@@ -410,7 +411,9 @@ class Memorize extends State<MemorizeScreen> {
                             Icons.repeat_rounded,
                             size: 34,
                           ),
-                          color: const Color.fromRGBO(0, 0, 0, 0.5),
+                          color: isOnRepeat
+                              ? Colors.lightGreen
+                              : const Color.fromRGBO(0, 0, 0, 0.5),
                         )
                       ],
                     )),
@@ -418,7 +421,7 @@ class Memorize extends State<MemorizeScreen> {
             ),
             Container(
                 padding: EdgeInsets.only(
-                    top: MediaQuery.of(context).size.height * 0.04,
+                    top: MediaQuery.of(context).size.height * 0.025,
                     right: MediaQuery.of(context).size.height * 0.04),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,

@@ -82,17 +82,17 @@ class MainPageState extends State<MainPage> with TickerProviderStateMixin {
       top: MediaQuery.of(context).size.height * 0.075,
       child: ToggleSwitch(
         minWidth: MediaQuery.of(context).size.width * 0.34,
-        minHeight: MediaQuery.of(context).size.height * 0.04,
+        minHeight: MediaQuery.of(context).size.height * 0.045,
         cornerRadius: 40.0,
         customTextStyles: [
           TextStyle(
             fontWeight: FontWeight.w700,
-            fontSize: 22,
+            fontSize: 24,
             color: color1,
           ),
           TextStyle(
             fontWeight: FontWeight.w700,
-            fontSize: 22,
+            fontSize: 24,
             color: color2,
           ),
         ],
@@ -101,7 +101,7 @@ class MainPageState extends State<MainPage> with TickerProviderStateMixin {
           [CustomColors.primary]
         ],
         activeFgColor: Colors.white,
-        fontSize: 22,
+        fontSize: 24,
         inactiveBgColor: CustomColors.background,
         inactiveFgColor: CustomColors.primary,
         initialLabelIndex: _currentIndex,
