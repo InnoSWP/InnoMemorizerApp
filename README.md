@@ -1,7 +1,7 @@
 # InnoMemorizerApp <img src="assets/icons/icon.png" height="50"/>
 ___
 
-IMP - an innovative open source application that will help people memorize text more easily \
+IMP - an innovative open source application that helps people memorize text more easily. InnoMemorizerApp allows you to control memorizing process with your voice. Currently it is available only for Android. \
 [![GitHub Super-Linter](https://github.com/InnoSWP/InnoMemorizerApp/workflows/Lint%20Code%20Base/badge.svg)](https://github.com/marketplace/actions/super-linter) \
 <img src="assets/images/gif.gif" height="100"/></h1>
 
@@ -16,20 +16,71 @@ ___
 ___
 ## 🏠 Pages
 
-### 📤 Upload page
-Home page provides opportunity to choose one of two options to share certain text for the memorizing process with the app: it is possible to do it through the uploading text with clicking on the right top button with the word `Upload` then go to the square with the title `browse files` click on it and eventually upload the text on PDF format. Push `Start memorize` and enjoy the process.
+<table>
+<tr>
+<td>
 
-<img src="assets/screens/upload.png" alt="upload page" width="200"/>
+### 📤 Upload page
+<p>
+    Home page provides an opportunity <br>
+    to upload text in 2 different ways. <br>
+    First of which is uploading .pdf <br>
+    file in the <b>Upload</b> section. <br>
+    The file will be parsed to plain text <br>
+    using an external API.
+</p>
+
+</td>
+<td>
+    <img src="https://github.com/InnoSWP/InnoMemorizerApp/blob/main/assets/screens/upload.png?raw=true" alt="upload page" width="200"/>
+</td>
+</tr>
+    
+<tr>
+<td>
 
 ### 📥 Type page 
-Also it is possible to paste text by yourself. For that option it is needed to click on the left top button on the home page. Then go to the `Input text` spot and write certain text. After that and pushing the button `Start memorizing` app will do parsing and start the expected process.
+<p>
+    Another option to upload text is <br>
+    to type text in the <b>Type</b> section. <br>
+    When you are done uploading text, <br>
+    click on <b>Start memorize</b>. <br>
+    This will initialize parsing of the <br>
+    plain text to sentences using an <br>
+    external API or embedded algorithm <br>
+    if the first one is not available.
+</p>
 
-<img src="assets/screens/paste.png" alt="type page" width="200"/>
+</td>
+<td>
+    <img src="https://github.com/InnoSWP/InnoMemorizerApp/blob/main/assets/screens/paste.png?raw=true" alt="type page" width="200"/>
+</td>
 
-## ✨ Memorizing page
-The memorizing page shows title of the text and three sentences: previous, current, and next for convenient navigation. Using buttons on the bottom it is possible to sound current sentence several time, go back to the previous one, and go further by one sentence.
+</tr>
+    
+<tr>
+<td>
+    
+### ✨ Memorizing page
+<p>    
+    The memorizing page shows title <br>
+    of the text and the parsed sentences. <br>
+    <b>Play/stop</b> - plays and stops on <br>
+    the current highlighted sentence. <br>
+    <b>Forward, rewind</b> - goes back and <br>
+    forth by 1 sentence. <br>
+    <b>Repeat</b> - repeats the current <br>
+    sentence until disabled.
 
-<img src="assets/screens/memorize.png" alt="memorizing page" width="200"/>
+</p>
+</td>
+
+<td>
+    <img src="https://github.com/InnoSWP/InnoMemorizerApp/blob/main/assets/screens/memorize.png?raw=true" alt="memorizing page" width="200"/>
+</td>
+        
+</tr>
+</table>
 
 ___
 ## 🔭 Used packages, libraries and APIs
@@ -49,17 +100,17 @@ ___
 
 | Feature                                       | Supported | 
 |-----------------------------------------------|:---------:|
-| Upload input text for memorize                |     ✅     |
-| Upload pdf for memorize                       |     ✅     |
+| Type text for memorize                        |     ✅     |
+| Upload PDF for memorize                       |     ✅     |
 | Highlight current sentence                    |     ✅     |
 | Add buttons to go to previous/next sentence   |     ✅     |
 | Add buttons to pause/stop/repeat sentence     |     ✅     |
-| Interface to write number of repeats          |     ✅     |
+| Interface to write number of repetitions      |     ✅     |
 | Playback sentences for memorize               |     ✅     |
 | Processing of voice commands via Alan platform|     ❌     |
 | Adaptation of different voice tones           |     ❌     |
 | Increased features in the app settings        |     ❌     |
-| Add new memorize technic                      |     ❌     |
+| Add new memorize techniques                   |     ❌     |
 
 ___
 ## Donate
