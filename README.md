@@ -1,4 +1,4 @@
-# InnoMemorizerApp
+# InnoMemorizerApp <img src="assets/icons/icon.png" height="50"/>
 ___
 
 IMP - an innovative open source application that will help people memorize text more easily \
