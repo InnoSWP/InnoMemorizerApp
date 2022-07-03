@@ -12,9 +12,11 @@ class OptionsScreen extends StatefulWidget {
 }
 
 class _OptionsScreenState extends State<OptionsScreen> {
+  bool repeatEachSentence = false;
+  bool enableVoiceCommands = false;
+  bool repeatInBlocks = false;
+
   var _numberOfRepetitions = 1;
-  var _repeatEverySentence = false;
-  var _enableVoiceCommand = false;
 
   final TextEditingController _repetitionsController = TextEditingController();
 
@@ -22,38 +24,18 @@ class _OptionsScreenState extends State<OptionsScreen> {
   void initState() {
     super.initState();
     loadNumberOfRepetitions();
-    loadRepeatingEverySentence();
-    loadEnabledVoiceCommands();
   }
 
   void loadNumberOfRepetitions() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    _numberOfRepetitions = (prefs.getInt('numberOfRepetitions') ?? 1);
-  }
-
-  void loadRepeatingEverySentence() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    _repeatEverySentence = (prefs.getBool('repeatEverySentence') ?? false);
-  }
-
-  void loadEnabledVoiceCommands() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    _enableVoiceCommand = (prefs.getBool('enableVoiceCommand') ?? false);
+    setState(() {
+      _numberOfRepetitions = (prefs.getInt('numberOfRepetitions') ?? 1);
+    });
   }
 
   void setNumberOfRepetitions(int val) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setInt('numberOfRepetitions', val);
-  }
-
-  void setRepeatingEverySentence(bool val) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setBool('repeatEverySentence', val);
-  }
-
-  void setEnabledVoiceCommands(bool val) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setBool('enableVoiceCommand', val);
   }
 
   @override
@@ -67,10 +49,7 @@ class _OptionsScreenState extends State<OptionsScreen> {
                 color: CustomColors.greyText, size: 40),
             onPressed: () async {
               setNumberOfRepetitions(
-                  int.tryParse(_repetitionsController.value.text.toString()) ??
-                      1);
-              setRepeatingEverySentence(_repeatEverySentence);
-              setEnabledVoiceCommands(_enableVoiceCommand);
+                  int.tryParse(_repetitionsController.value.text.toString()) ?? 1);
               Navigator.of(context).pop();
             },
           ),
@@ -95,10 +74,10 @@ class _OptionsScreenState extends State<OptionsScreen> {
                         padding: EdgeInsets.only(
                             right: MediaQuery.of(context).size.width * 0.05),
                         child: Switch(
-                            value: _repeatEverySentence,
+                            value: repeatEachSentence,
                             onChanged: (value) {
                               setState(() {
-                                _repeatEverySentence ^= true;
+                                repeatEachSentence ^= true;
                               });
                             }))
                   ],
@@ -138,24 +117,128 @@ class _OptionsScreenState extends State<OptionsScreen> {
                     ),
                   ],
                 ),
+
+
+
+                Padding(
+                  padding: EdgeInsets.only(
+                    top: MediaQuery.of(context).size.height * 0.04,
+                  ),
+                  child: Row(
+                    children: [
+                      const Expanded(
+                        child: Text('Repeat in blocks',
+                            style: TextStyle(fontSize: 20)),
+                      ),
+                      Container(
+                          padding: EdgeInsets.only(
+                              right: MediaQuery.of(context).size.width * 0.05),
+                          child: Switch(
+                              value: repeatInBlocks,
+                              onChanged: (value) {
+                                setState(() {
+                                  repeatInBlocks ^= true;
+                                });
+                              }
+                          ))
+                    ],
+                  ),
+                ),
                 Row(
                   children: [
                     const Expanded(
-                      child: Text('Enable voice commands',
-                          style: TextStyle(fontSize: 20)),
+                      child:
+                      Text('Block size', style: TextStyle(fontSize: 20)),
                     ),
                     Container(
-                        padding: EdgeInsets.only(
-                            right: MediaQuery.of(context).size.width * 0.05),
-                        child: Switch(
-                            value: _enableVoiceCommand,
-                            onChanged: (value) {
-                              setState(() {
-                                _enableVoiceCommand ^= true;
-                              });
-                            }))
+                      padding: EdgeInsets.only(
+                          right: MediaQuery.of(context).size.width * 0.05),
+                      height: 35,
+                      width: 70,
+                      child: TextField(
+                        keyboardType: TextInputType.number,
+                        inputFormatters: <TextInputFormatter>[
+                          FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                          FilteringTextInputFormatter.digitsOnly
+                        ],
+                        //controller: _repetitionsController,
+                        maxLines: 1,
+                        decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                              borderSide: const BorderSide(
+                                  color: CustomColors.blueBorder),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(
+                                  color: CustomColors.darkBlueBorder),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            hintText: '1'),
+                      ),
+                    ),
                   ],
-                )
+                ),
+                Row(
+                  children: [
+                    const Expanded(
+                      child:
+                      Text('Repeat amount for each block', style: TextStyle(fontSize: 20)),
+                    ),
+                    Container(
+                      padding: EdgeInsets.only(
+                          right: MediaQuery.of(context).size.width * 0.05),
+                      height: 35,
+                      width: 70,
+                      child: TextField(
+                        keyboardType: TextInputType.number,
+                        inputFormatters: <TextInputFormatter>[
+                          FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                          FilteringTextInputFormatter.digitsOnly
+                        ],
+                        //controller: _repetitionsController,
+                        maxLines: 1,
+                        decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                              borderSide: const BorderSide(
+                                  color: CustomColors.blueBorder),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(
+                                  color: CustomColors.darkBlueBorder),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            hintText: '1'),
+                      ),
+                    ),
+                  ],
+                ),
+
+
+                Padding(
+                  padding: EdgeInsets.only(
+                    top: MediaQuery.of(context).size.height * 0.04,
+                  ),
+                  child: Row(
+                    children: [
+                      const Expanded(
+                        child: Text('Enable voice commands',
+                            style: TextStyle(fontSize: 20)),
+                      ),
+                      Container(
+                          padding: EdgeInsets.only(
+                              right: MediaQuery.of(context).size.width * 0.05),
+                          child: Switch(
+                              value: enableVoiceCommands,
+                              onChanged: (value) {
+                                setState(() {
+                                  enableVoiceCommands ^= true;
+                                });
+                              }))
+                    ],
+                  ),
+                ),
               ],
             )));
   }
