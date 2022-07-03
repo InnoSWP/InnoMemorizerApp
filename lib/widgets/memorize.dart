@@ -21,6 +21,12 @@ class MemorizeScreen extends StatefulWidget {
 class Memorize extends State<MemorizeScreen> {
   int _currentIndex = 0;
 
+  bool isPlayingNow = false;
+  bool buttonsAreActive = true;
+  bool isOnRepeat = false;
+
+  int amountRepeated = 0;
+
   final ItemScrollController _scrollController = ItemScrollController();
   final List<Widget> _items = [];
 
@@ -40,33 +46,31 @@ class Memorize extends State<MemorizeScreen> {
         int numberOfRepetitions = (prefs.getInt('numberOfRepetitions') ?? 1);
 
         if (_currentIndex < widget.sentences.length) {
-          print(numberOfRepetitions);
+          print(isOnRepeat);
 
           setState(() {
             if (prefs.getBool('repeatEverySentence') ?? false) {
               if (amountRepeated + 1 < numberOfRepetitions) {
                 ++amountRepeated;
               } else {
-                ++_currentIndex;
+                incrementCurrentIndex();
                 amountRepeated = 0;
               }
             } else if (isOnRepeat) {
               if (amountRepeated < numberOfRepetitions) {
                 ++amountRepeated;
               } else {
-                ++_currentIndex;
+                incrementCurrentIndex();
                 onRepeat();
               }
             } else {
-              ++_currentIndex;
+              incrementCurrentIndex();
             }
 
-            if (_currentIndex < widget.sentences.length) {
-              _items[_currentIndex] = getHighlightedSentence(_currentIndex);
-              _scrollController.scrollTo(
-                  index: _currentIndex,
-                  duration: const Duration(milliseconds: 400));
-            }
+            _items[_currentIndex] = getHighlightedSentence(_currentIndex);
+            _scrollController.scrollTo(
+                index: _currentIndex,
+                duration: const Duration(milliseconds: 400));
             if (_currentIndex > 0) {
               _items[_currentIndex - 1] = getCasualSentence(_currentIndex - 1);
             }
@@ -94,12 +98,6 @@ class Memorize extends State<MemorizeScreen> {
   void dispose() {
     super.dispose();
   }
-
-  bool isPlayingNow = false;
-  bool buttonsAreActive = true;
-  bool isOnRepeat = false;
-
-  int amountRepeated = 0;
 
   void onClickPlayPause() {
     if (buttonsAreActive) {
@@ -137,6 +135,9 @@ class Memorize extends State<MemorizeScreen> {
     if (buttonsAreActive) {
       setState(() {
         if (_currentIndex > 0) {
+          AlanVoice.deactivate();
+          isPlayingNow = false;
+
           --_currentIndex;
 
           _items[_currentIndex] = getHighlightedSentence(_currentIndex);
@@ -144,14 +145,6 @@ class Memorize extends State<MemorizeScreen> {
           _scrollController.scrollTo(
               index: _currentIndex,
               duration: const Duration(milliseconds: 400));
-          //If you just do this it waits until the previous sentence is said
-          //playSentence();
-
-          //AlanVoice.deactivate();
-          //AlanVoice.activate();
-
-          AlanVoice.deactivate();
-          isPlayingNow = false;
         }
       });
     }
@@ -159,13 +152,16 @@ class Memorize extends State<MemorizeScreen> {
 
   void onRepeat() {
     amountRepeated = 0;
-    setState(() => isOnRepeat ^= true);
+    setState(() => isOnRepeat = !isOnRepeat);
   }
 
   void onClickForward() {
     if (buttonsAreActive) {
       setState(() {
         if (_currentIndex < widget.sentences.length - 1) {
+          AlanVoice.deactivate();
+          isPlayingNow = false;
+
           ++_currentIndex;
 
           _items[_currentIndex - 1] = getCasualSentence(_currentIndex - 1);
@@ -173,15 +169,6 @@ class Memorize extends State<MemorizeScreen> {
           _scrollController.scrollTo(
               index: _currentIndex,
               duration: const Duration(milliseconds: 400));
-
-          //If you just do this it waits until the previous sentence is said
-          //playSentence();
-
-          //AlanVoice.deactivate();
-          //AlanVoice.activate();
-
-          AlanVoice.deactivate();
-          isPlayingNow = false;
         }
       });
     }
@@ -190,11 +177,10 @@ class Memorize extends State<MemorizeScreen> {
   @override
   void initState() {
     super.initState();
-    SharedPreferences.getInstance()
-        .then((prefs) {
+    SharedPreferences.getInstance().then((prefs) {
       prefs.setInt('numberOfRepetitions', 1);
       prefs.setBool('repeatEverySentence', false);
-      prefs.setBool('enableVoiceCommand', true);
+      prefs.setBool('enableVoiceCommand', false);
     });
     for (int i = 0; i < widget.sentences.length; i++) {
       _items.add(i == _currentIndex
@@ -367,9 +353,7 @@ class Memorize extends State<MemorizeScreen> {
                           ),
                         ),
                         IconButton(
-                          onPressed: () {
-                            onRepeat;
-                          },
+                          onPressed: onRepeat,
                           icon: const Icon(
                             Icons.repeat_rounded,
                             size: 34,
@@ -444,5 +428,13 @@ class Memorize extends State<MemorizeScreen> {
         ),
       ),
     );
+  }
+
+  void incrementCurrentIndex() {
+    if (_currentIndex + 1 < widget.sentences.length) {
+      ++_currentIndex;
+    } else {
+      AlanVoice.deactivate();
+    }
   }
 }

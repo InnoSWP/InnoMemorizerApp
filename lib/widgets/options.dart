@@ -98,7 +98,7 @@ class _OptionsScreenState extends State<OptionsScreen> {
                             value: _repeatEverySentence,
                             onChanged: (value) {
                               setState(() {
-                                _repeatEverySentence ^= true;
+                                _repeatEverySentence = !_repeatEverySentence;
                               });
                             }))
                   ],
@@ -151,7 +151,7 @@ class _OptionsScreenState extends State<OptionsScreen> {
                             value: _enableVoiceCommand,
                             onChanged: (value) {
                               setState(() {
-                                _enableVoiceCommand ^= true;
+                                _enableVoiceCommand = !_enableVoiceCommand;
                               });
                             }))
                   ],
