@@ -165,9 +165,12 @@ class Memorize extends State<MemorizeScreen> {
 
           _items[_currentIndex - 1] = getCasualSentence(_currentIndex - 1);
           _items[_currentIndex] = getHighlightedSentence(_currentIndex);
-          _scrollController.scrollTo(
-              index: _currentIndex,
-              duration: const Duration(milliseconds: 400));
+          Future.delayed(const Duration(milliseconds: 100), () {
+            _scrollController.scrollTo(
+                index: _currentIndex,
+                duration: const Duration(milliseconds: 200));
+          });
+
         }
       });
     }
@@ -274,7 +277,7 @@ class Memorize extends State<MemorizeScreen> {
         elevation: 0,
         backgroundColor: CustomColors.background,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back,
+          icon: const Icon(Icons.arrow_back_rounded,
               color: CustomColors.greyText, size: 40),
           onPressed: () {
             Navigator.of(context).pop();
@@ -284,7 +287,7 @@ class Memorize extends State<MemorizeScreen> {
             style: TextStyle(
                 color: CustomColors.primary,
                 fontWeight: FontWeight.w700,
-                fontSize: 28)),
+                fontSize: 32)),
         actions: [
           IconButton(
               padding: EdgeInsets.only(
@@ -300,7 +303,7 @@ class Memorize extends State<MemorizeScreen> {
                 });
               },
               icon: const Icon(
-                Icons.settings,
+                Icons.settings_rounded,
                 color: CustomColors.greyText,
                 size: 40,
               ))
