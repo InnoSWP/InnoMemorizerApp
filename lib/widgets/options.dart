@@ -12,11 +12,10 @@ class OptionsScreen extends StatefulWidget {
 }
 
 class _OptionsScreenState extends State<OptionsScreen> {
-  bool repeatEachSentence = false;
-  bool enableVoiceCommands = false;
-  bool repeatInBlocks = false;
-
   var _numberOfRepetitions = 1;
+  var _repeatEverySentence = false;
+  var _enableVoiceCommand = false;
+  var _repeatInBlocks = false;
 
   final TextEditingController _repetitionsController = TextEditingController();
 
@@ -24,18 +23,38 @@ class _OptionsScreenState extends State<OptionsScreen> {
   void initState() {
     super.initState();
     loadNumberOfRepetitions();
+    loadRepeatingEverySentence();
+    loadEnabledVoiceCommands();
   }
 
   void loadNumberOfRepetitions() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _numberOfRepetitions = (prefs.getInt('numberOfRepetitions') ?? 1);
-    });
+    _numberOfRepetitions = (prefs.getInt('numberOfRepetitions') ?? 1);
+  }
+
+  void loadRepeatingEverySentence() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    _repeatEverySentence = (prefs.getBool('repeatEverySentence') ?? false);
+  }
+
+  void loadEnabledVoiceCommands() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    _enableVoiceCommand = (prefs.getBool('enableVoiceCommand') ?? false);
   }
 
   void setNumberOfRepetitions(int val) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setInt('numberOfRepetitions', val);
+  }
+
+  void setRepeatingEverySentence(bool val) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('repeatEverySentence', val);
+  }
+
+  void setEnabledVoiceCommands(bool val) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('enableVoiceCommand', val);
   }
 
   @override
@@ -49,7 +68,10 @@ class _OptionsScreenState extends State<OptionsScreen> {
                 color: CustomColors.greyText, size: 40),
             onPressed: () async {
               setNumberOfRepetitions(
-                  int.tryParse(_repetitionsController.value.text.toString()) ?? 1);
+                  int.tryParse(_repetitionsController.value.text.toString()) ??
+                      1);
+              setRepeatingEverySentence(_repeatEverySentence);
+              setEnabledVoiceCommands(_enableVoiceCommand);
               Navigator.of(context).pop();
             },
           ),
@@ -61,7 +83,7 @@ class _OptionsScreenState extends State<OptionsScreen> {
         ),
         body: Container(
             padding:
-                EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.07),
+            EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.07),
             child: Column(
               children: [
                 Row(
@@ -74,10 +96,10 @@ class _OptionsScreenState extends State<OptionsScreen> {
                         padding: EdgeInsets.only(
                             right: MediaQuery.of(context).size.width * 0.05),
                         child: Switch(
-                            value: repeatEachSentence,
+                            value: _repeatEverySentence,
                             onChanged: (value) {
                               setState(() {
-                                repeatEachSentence ^= true;
+                                _repeatEverySentence ^= true;
                               });
                             }))
                   ],
@@ -86,7 +108,7 @@ class _OptionsScreenState extends State<OptionsScreen> {
                   children: [
                     const Expanded(
                       child:
-                          Text('Repeat amount', style: TextStyle(fontSize: 20)),
+                      Text('Repeat amount', style: TextStyle(fontSize: 20)),
                     ),
                     Container(
                       padding: EdgeInsets.only(
@@ -134,10 +156,10 @@ class _OptionsScreenState extends State<OptionsScreen> {
                           padding: EdgeInsets.only(
                               right: MediaQuery.of(context).size.width * 0.05),
                           child: Switch(
-                              value: repeatInBlocks,
+                              value: _repeatInBlocks,
                               onChanged: (value) {
                                 setState(() {
-                                  repeatInBlocks ^= true;
+                                  _repeatInBlocks ^= true;
                                 });
                               }
                           ))
@@ -230,10 +252,10 @@ class _OptionsScreenState extends State<OptionsScreen> {
                           padding: EdgeInsets.only(
                               right: MediaQuery.of(context).size.width * 0.05),
                           child: Switch(
-                              value: enableVoiceCommands,
+                              value: _enableVoiceCommand,
                               onChanged: (value) {
                                 setState(() {
-                                  enableVoiceCommands ^= true;
+                                  _enableVoiceCommand ^= true;
                                 });
                               }))
                     ],
@@ -255,8 +277,8 @@ class MyToggle extends StatelessWidget {
   @override
   Widget build(context) {
     return ToggleSwitch(
-        //minWidth: MediaQuery.of(context).size.width * 0.34,
-        //minHeight: MediaQuery.of(context).size.height * 0.04,
+      //minWidth: MediaQuery.of(context).size.width * 0.34,
+      //minHeight: MediaQuery.of(context).size.height * 0.04,
         cornerRadius: 40.0,
         activeBgColors: const [
           [CustomColors.primary],
