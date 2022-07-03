@@ -21,25 +21,31 @@ class _OptionsScreenState extends State<OptionsScreen> {
 
   @override
   void initState() {
-    super.initState();
     loadNumberOfRepetitions();
     loadRepeatingEverySentence();
     loadEnabledVoiceCommands();
+    super.initState();
   }
 
   void loadNumberOfRepetitions() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    _numberOfRepetitions = (prefs.getInt('numberOfRepetitions') ?? 1);
+    setState(() {
+      _numberOfRepetitions = (prefs.getInt('numberOfRepetitions') ?? 1);
+    });
   }
 
   void loadRepeatingEverySentence() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    _repeatEverySentence = (prefs.getBool('repeatEverySentence') ?? false);
+    setState(() {
+      _repeatEverySentence = (prefs.getBool('repeatEverySentence') ?? false);
+    });
   }
 
   void loadEnabledVoiceCommands() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    _enableVoiceCommand = (prefs.getBool('enableVoiceCommand') ?? false);
+    setState(() {
+      _enableVoiceCommand = (prefs.getBool('enableVoiceCommand') ?? false);
+    });
   }
 
   void setNumberOfRepetitions(int val) async {

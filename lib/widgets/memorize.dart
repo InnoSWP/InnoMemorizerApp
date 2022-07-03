@@ -46,7 +46,6 @@ class Memorize extends State<MemorizeScreen> {
         int numberOfRepetitions = (prefs.getInt('numberOfRepetitions') ?? 1);
 
         if (_currentIndex < widget.sentences.length) {
-          print(isOnRepeat);
 
           setState(() {
             if (prefs.getBool('repeatEverySentence') ?? false) {
