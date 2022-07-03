@@ -208,10 +208,11 @@ class Memorize extends State<MemorizeScreen> {
         );
       },
       separatorBuilder: (BuildContext context, int index) {
-        return Container(
-          height: 1,
-          color: CustomColors.greyBorder,
-          child: const Divider(color: CustomColors.greyBorder),
+        return Divider(
+          thickness: 1,
+          indent: MediaQuery.of(context).size.width * 0.035,
+          endIndent: MediaQuery.of(context).size.width * 0.035,
+          color: CustomColors.greyBorder.withOpacity(0.5),
         );
       },
     );
