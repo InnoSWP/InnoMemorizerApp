@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:toggle_switch/toggle_switch.dart';
 import '../common/theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -12,54 +11,101 @@ class OptionsScreen extends StatefulWidget {
 }
 
 class _OptionsScreenState extends State<OptionsScreen> {
-  var _numberOfRepetitions = 1;
-  var _repeatEverySentence = false;
-  var _enableVoiceCommand = false;
-  var _repeatInBlocks = false;
+  int _numberOfRepetitions = 1;
+  int _numberOfBlockRepetitions = 1;
+  int _blockSize = 1;
+  bool _repeatEverySentence = false;
+  bool _enableVoiceCommand = false;
+  bool _repeatInBlocks = false;
 
-  final TextEditingController _repetitionsController = TextEditingController();
+  final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+
+  final TextEditingController _repeatAmountController = TextEditingController();
+  final TextEditingController _blockSizeController = TextEditingController();
+  final TextEditingController _blockRepeatAmountController =
+      TextEditingController();
 
   @override
   void initState() {
     loadNumberOfRepetitions();
     loadRepeatingEverySentence();
+    loadNumberOfBlockRepetitions();
+    loadBlockSize();
+    loadRepeatInBlocks();
     loadEnabledVoiceCommands();
     super.initState();
   }
 
   void loadNumberOfRepetitions() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final SharedPreferences prefs = await _prefs;
     setState(() {
       _numberOfRepetitions = (prefs.getInt('numberOfRepetitions') ?? 1);
     });
   }
 
+  void loadNumberOfBlockRepetitions() async {
+    final SharedPreferences prefs = await _prefs;
+    setState(() {
+      _numberOfBlockRepetitions =
+          (prefs.getInt('numberOfBlockRepetitions') ?? 1);
+    });
+  }
+
+  void loadBlockSize() async {
+    final SharedPreferences prefs = await _prefs;
+    setState(() {
+      _blockSize = (prefs.getInt('blockSize') ?? 1);
+    });
+  }
+
   void loadRepeatingEverySentence() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final SharedPreferences prefs = await _prefs;
     setState(() {
       _repeatEverySentence = (prefs.getBool('repeatEverySentence') ?? false);
     });
   }
 
   void loadEnabledVoiceCommands() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final SharedPreferences prefs = await _prefs;
     setState(() {
       _enableVoiceCommand = (prefs.getBool('enableVoiceCommand') ?? false);
     });
   }
 
+  void loadRepeatInBlocks() async {
+    final SharedPreferences prefs = await _prefs;
+    setState(() {
+      _repeatInBlocks = (prefs.getBool('repeatInBlocks') ?? false);
+    });
+  }
+
   void setNumberOfRepetitions(int val) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final SharedPreferences prefs = await _prefs;
     prefs.setInt('numberOfRepetitions', val);
   }
 
+  void setBlockSize(int val) async {
+    final SharedPreferences prefs = await _prefs;
+    prefs.setInt('blockSize', val);
+  }
+
+  void setNumberOfBlockRepetitions(int val) async {
+    final SharedPreferences prefs = await _prefs;
+    prefs.setInt('numberOfBlockRepetitions', val);
+  }
+
   void setRepeatingEverySentence(bool val) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final SharedPreferences prefs = await _prefs;
     prefs.setBool('repeatEverySentence', val);
   }
 
+  void setRepeatInBlocks(bool val) async {
+    final SharedPreferences prefs = await _prefs;
+    prefs.setBool('repeatInBlocks', val);
+  }
+
   void setEnabledVoiceCommands(bool val) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final SharedPreferences prefs = await _prefs;
     prefs.setBool('enableVoiceCommand', val);
   }
 
@@ -73,11 +119,24 @@ class _OptionsScreenState extends State<OptionsScreen> {
             icon: const Icon(Icons.arrow_back,
                 color: CustomColors.greyText, size: 40),
             onPressed: () async {
-              setNumberOfRepetitions(
-                  int.tryParse(_repetitionsController.value.text.toString()) ??
-                      1);
+              if (_repeatAmountController.text.isNotEmpty) {
+                setNumberOfRepetitions(int.tryParse(
+                        _repeatAmountController.value.text.toString()) ??
+                    1);
+              }
               setRepeatingEverySentence(_repeatEverySentence);
               setEnabledVoiceCommands(_enableVoiceCommand);
+              setRepeatInBlocks(_repeatInBlocks);
+              if (_blockSizeController.text.isNotEmpty) {
+                setBlockSize(
+                    int.tryParse(_blockSizeController.value.text.toString()) ??
+                        1);
+              }
+              if (_blockRepeatAmountController.text.isNotEmpty) {
+                setNumberOfBlockRepetitions(int.tryParse(
+                        _blockRepeatAmountController.value.text.toString()) ??
+                    1);
+              }
               Navigator.of(context).pop();
             },
           ),
@@ -88,8 +147,10 @@ class _OptionsScreenState extends State<OptionsScreen> {
                   fontSize: 28)),
         ),
         body: Container(
-            padding:
-            EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.07),
+            padding: EdgeInsets.only(
+                left: MediaQuery.of(context).size.width * 0.07,
+                right: MediaQuery.of(context).size.width * 0.07,
+                top: MediaQuery.of(context).size.height * 0.02),
             child: Column(
               children: [
                 Row(
@@ -114,20 +175,20 @@ class _OptionsScreenState extends State<OptionsScreen> {
                   children: [
                     const Expanded(
                       child:
-                      Text('Repeat amount', style: TextStyle(fontSize: 20)),
+                          Text('Repeat amount', style: TextStyle(fontSize: 20)),
                     ),
                     Container(
                       padding: EdgeInsets.only(
                           right: MediaQuery.of(context).size.width * 0.05),
-                      height: 35,
-                      width: 70,
+                      height: MediaQuery.of(context).size.height * 0.05,
+                      width: MediaQuery.of(context).size.width * 0.2,
                       child: TextField(
                         keyboardType: TextInputType.number,
                         inputFormatters: <TextInputFormatter>[
                           FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
                           FilteringTextInputFormatter.digitsOnly
                         ],
-                        controller: _repetitionsController,
+                        controller: _repeatAmountController,
                         maxLines: 1,
                         decoration: InputDecoration(
                             border: OutlineInputBorder(
@@ -145,38 +206,35 @@ class _OptionsScreenState extends State<OptionsScreen> {
                     ),
                   ],
                 ),
-
-
-
-                Padding(
-                  padding: EdgeInsets.only(
-                    top: MediaQuery.of(context).size.height * 0.04,
-                  ),
-                  child: Row(
-                    children: [
-                      const Expanded(
-                        child: Text('Repeat in blocks',
-                            style: TextStyle(fontSize: 20)),
-                      ),
-                      Container(
-                          padding: EdgeInsets.only(
-                              right: MediaQuery.of(context).size.width * 0.05),
-                          child: Switch(
-                              value: _repeatInBlocks,
-                              onChanged: (value) {
-                                setState(() {
-                                  _repeatInBlocks ^= true;
-                                });
-                              }
-                          ))
-                    ],
-                  ),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                Divider(
+                  endIndent: MediaQuery.of(context).size.width * 0.04,
+                  thickness: 1,
+                  color: CustomColors.greyBorder,
                 ),
                 Row(
                   children: [
                     const Expanded(
-                      child:
-                      Text('Block size', style: TextStyle(fontSize: 20)),
+                      child: Text('Repeat in blocks',
+                          style: TextStyle(fontSize: 20)),
+                    ),
+                    Container(
+                        padding: EdgeInsets.only(
+                            right: MediaQuery.of(context).size.width * 0.05),
+                        child: Switch(
+                            value: _repeatInBlocks,
+                            onChanged: (value) {
+                              setState(() {
+                                _repeatInBlocks ^= true;
+                              });
+                            }))
+                  ],
+                ),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.01),
+                Row(
+                  children: [
+                    const Expanded(
+                      child: Text('Block size', style: TextStyle(fontSize: 20)),
                     ),
                     Container(
                       padding: EdgeInsets.only(
@@ -189,7 +247,7 @@ class _OptionsScreenState extends State<OptionsScreen> {
                           FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
                           FilteringTextInputFormatter.digitsOnly
                         ],
-                        //controller: _repetitionsController,
+                        controller: _blockSizeController,
                         maxLines: 1,
                         decoration: InputDecoration(
                             border: OutlineInputBorder(
@@ -202,16 +260,17 @@ class _OptionsScreenState extends State<OptionsScreen> {
                                   color: CustomColors.darkBlueBorder),
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            hintText: '1'),
+                            hintText: _blockSize.toString()),
                       ),
                     ),
                   ],
                 ),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                 Row(
                   children: [
                     const Expanded(
-                      child:
-                      Text('Repeat amount for each block', style: TextStyle(fontSize: 20)),
+                      child: Text('Repeat amount for each block',
+                          style: TextStyle(fontSize: 20)),
                     ),
                     Container(
                       padding: EdgeInsets.only(
@@ -224,7 +283,7 @@ class _OptionsScreenState extends State<OptionsScreen> {
                           FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
                           FilteringTextInputFormatter.digitsOnly
                         ],
-                        //controller: _repetitionsController,
+                        controller: _blockRepeatAmountController,
                         maxLines: 1,
                         decoration: InputDecoration(
                             border: OutlineInputBorder(
@@ -237,16 +296,20 @@ class _OptionsScreenState extends State<OptionsScreen> {
                                   color: CustomColors.darkBlueBorder),
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            hintText: '1'),
+                            hintText: _numberOfBlockRepetitions.toString()),
                       ),
                     ),
                   ],
                 ),
-
-
+                SizedBox(height: MediaQuery.of(context).size.height * 0.03),
+                Divider(
+                  endIndent: MediaQuery.of(context).size.width * 0.04,
+                  thickness: 1,
+                  color: CustomColors.greyBorder,
+                ),
                 Padding(
                   padding: EdgeInsets.only(
-                    top: MediaQuery.of(context).size.height * 0.04,
+                    top: MediaQuery.of(context).size.height * 0.01,
                   ),
                   child: Row(
                     children: [
@@ -269,34 +332,5 @@ class _OptionsScreenState extends State<OptionsScreen> {
                 ),
               ],
             )));
-  }
-}
-
-class MyToggle extends StatelessWidget {
-  const MyToggle({Key? key, required this.onToggleHandler}) : super(key: key);
-
-  final Function(void) onToggleHandler;
-
-  final Color color1 = Colors.white;
-  final Color color2 = CustomColors.primary;
-
-  @override
-  Widget build(context) {
-    return ToggleSwitch(
-      //minWidth: MediaQuery.of(context).size.width * 0.34,
-      //minHeight: MediaQuery.of(context).size.height * 0.04,
-        cornerRadius: 40.0,
-        activeBgColors: const [
-          [CustomColors.primary],
-          [CustomColors.primary]
-        ],
-        inactiveBgColor: CustomColors.background,
-        //initialLabelIndex: _initialIndex,
-        totalSwitches: 2,
-        borderColor: const [CustomColors.primary, CustomColors.primary],
-        borderWidth: 2,
-        //labels: const ['Paste text', 'Upload'],
-        radiusStyle: true,
-        onToggle: onToggleHandler);
   }
 }
