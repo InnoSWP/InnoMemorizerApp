@@ -20,12 +20,9 @@ class MemorizeScreen extends StatefulWidget {
 
 class Memorize extends State<MemorizeScreen> {
   int _currentIndex = 0;
-  int _numberOfRepetitions = 0;
 
   final ItemScrollController _scrollController = ItemScrollController();
   final List<Widget> _items = [];
-
-  final repeatTextController = TextEditingController();
 
   Memorize() {
     /// Init Alan Button with project key from Alan Studio
@@ -34,43 +31,60 @@ class Memorize extends State<MemorizeScreen> {
 
     /// Handle commands from Alan Studio
     AlanVoice.onCommand.add((command) async {
-      debugPrint("got new command ${command.toString()}");
+      debugPrint('got new command ${command.toString()}');
 
-      if (command.data["command"] == "finishedPlaying") {
+      if (command.data['command'] == 'finishedPlaying') {
         //This will not fire if Alan is disabled
 
-        //Therefore we don't even need to check isPlayingNow
-        if (_currentIndex + 1 < widget.sentences.length) {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        int numberOfRepetitions = (prefs.getInt('numberOfRepetitions') ?? 1);
+
+        if (_currentIndex < widget.sentences.length) {
+          print(numberOfRepetitions);
+
           setState(() {
-            if (isOnRepeat) {
-              if (amountRepeated + 1 < _numberOfRepetitions) {
+            if (prefs.getBool('repeatEverySentence') ?? false) {
+              if (amountRepeated + 1 < numberOfRepetitions) {
                 ++amountRepeated;
               } else {
+                ++_currentIndex;
+                amountRepeated = 0;
+              }
+            } else if (isOnRepeat) {
+              if (amountRepeated < numberOfRepetitions) {
+                ++amountRepeated;
+              } else {
+                ++_currentIndex;
                 onRepeat();
               }
             } else {
               ++_currentIndex;
             }
 
-            _items[_currentIndex] = getHighlightedSentence(_currentIndex);
-            _items[_currentIndex - 1] = getCasualSentence(_currentIndex - 1);
-            _scrollController.scrollTo(
-                index: _currentIndex,
-                duration: const Duration(milliseconds: 400));
+            if (_currentIndex < widget.sentences.length) {
+              _items[_currentIndex] = getHighlightedSentence(_currentIndex);
+              _scrollController.scrollTo(
+                  index: _currentIndex,
+                  duration: const Duration(milliseconds: 400));
+            }
+            if (_currentIndex > 0) {
+              _items[_currentIndex - 1] = getCasualSentence(_currentIndex - 1);
+            }
           });
+
           playSentence();
         }
-      } else if (command.data["command"] == "play") {
+      } else if (command.data['command'] == 'play') {
         if (!isPlayingNow) {
           onClickPlayPause();
         }
-      } else if (command.data["command"] == "stop") {
+      } else if (command.data['command'] == 'stop') {
         if (isPlayingNow) {
           onClickPlayPause();
         }
-      } else if (command.data["command"] == "back") {
+      } else if (command.data['command'] == 'back') {
         onClickRewind();
-      } else if (command.data["command"] == "forward") {
+      } else if (command.data['command'] == 'forward') {
         onClickForward();
       }
     });
@@ -78,7 +92,6 @@ class Memorize extends State<MemorizeScreen> {
 
   @override
   void dispose() {
-    repeatTextController.dispose();
     super.dispose();
   }
 
@@ -116,22 +129,8 @@ class Memorize extends State<MemorizeScreen> {
   }
 
   void playSentence() {
-    //await AlanVoice.playText(widget.sentences[_currentIndex]!);
-    //var lastCur = _currentIndex;
-
-    //AlanVoice.deactivate();
-
-    //Necessary to prevent bugs with voice falling behind fast rewind and forward button clicking
-    //Because when callProjectApi is called even if you call the second, the first will say
-    //Future.delayed(const Duration(milliseconds: 1000), () {
-    //  if (lastCur == _currentIndex) {
-    //AlanVoice.activate();
-
     var params = jsonEncode({"text": widget.sentences[_currentIndex]!});
     AlanVoice.callProjectApi("script::say", params);
-    //  }
-    //});
-    //playSentence();
   }
 
   void onClickRewind() {
@@ -160,10 +159,7 @@ class Memorize extends State<MemorizeScreen> {
 
   void onRepeat() {
     amountRepeated = 0;
-    setState(() {
-      isOnRepeat = !isOnRepeat;
-      loadNumberOfRepetitions();
-    });
+    setState(() => isOnRepeat ^= true);
   }
 
   void onClickForward() {
@@ -194,7 +190,12 @@ class Memorize extends State<MemorizeScreen> {
   @override
   void initState() {
     super.initState();
-    loadNumberOfRepetitions();
+    SharedPreferences.getInstance()
+        .then((prefs) {
+      prefs.setInt('numberOfRepetitions', 1);
+      prefs.setBool('repeatEverySentence', false);
+      prefs.setBool('enableVoiceCommand', true);
+    });
     for (int i = 0; i < widget.sentences.length; i++) {
       _items.add(i == _currentIndex
           ? getHighlightedSentence(i)
@@ -218,44 +219,6 @@ class Memorize extends State<MemorizeScreen> {
       },
     );
   }
-
-  // Widget getCurrentSentences2() {
-  //   if (widget.sentences.length >= 3) {
-  //     if (_currentIndex == 0) {
-  //       return Column(children: <Widget>[
-  //         getHighlightedSentence(_currentIndex),
-  //         getCasualSentence(_currentIndex + 1),
-  //         getCasualSentence(_currentIndex + 2),
-  //       ]);
-  //     } else if (_currentIndex == widget.sentences.length - 1) {
-  //       return Column(children: <Widget>[
-  //         getCasualSentence(_currentIndex - 2),
-  //         getCasualSentence(_currentIndex - 1),
-  //         getHighlightedSentence(_currentIndex),
-  //       ]);
-  //     } else {
-  //       return Column(children: <Widget>[
-  //         getCasualSentence(_currentIndex - 1),
-  //         getHighlightedSentence(_currentIndex),
-  //         getCasualSentence(_currentIndex + 1),
-  //       ]);
-  //     }
-  //   } else if (widget.sentences.length == 2) {
-  //     if (_currentIndex == 0) {
-  //       return Column(children: <Widget>[
-  //         getHighlightedSentence(_currentIndex),
-  //         getCasualSentence(_currentIndex + 1),
-  //       ]);
-  //     } else {
-  //       return Column(children: <Widget>[
-  //         getCasualSentence(_currentIndex - 1),
-  //         getHighlightedSentence(_currentIndex),
-  //       ]);
-  //     }
-  //   }
-  //
-  //   return getHighlightedSentence(_currentIndex);
-  // }
 
   Widget getCasualSentence(int index) {
     return Container(
@@ -405,14 +368,14 @@ class Memorize extends State<MemorizeScreen> {
                         ),
                         IconButton(
                           onPressed: () {
-                            onRepeat();
+                            onRepeat;
                           },
                           icon: const Icon(
                             Icons.repeat_rounded,
                             size: 34,
                           ),
                           color: isOnRepeat
-                              ? Colors.lightGreen
+                              ? Colors.deepPurple
                               : const Color.fromRGBO(0, 0, 0, 0.5),
                         )
                       ],
@@ -481,12 +444,5 @@ class Memorize extends State<MemorizeScreen> {
         ),
       ),
     );
-  }
-
-  void loadNumberOfRepetitions() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _numberOfRepetitions = (prefs.getInt('numberOfRepetitions') ?? 1);
-    });
   }
 }

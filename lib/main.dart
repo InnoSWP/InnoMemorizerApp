@@ -17,9 +17,6 @@ class MemorizationApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    SharedPreferences.getInstance()
-        .then((prefs) => prefs.setInt('numberOfRepetitions', 1));
-
     return MaterialApp(
       theme: ThemeData(
         primaryColor: CustomColors.primary,

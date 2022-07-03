@@ -85,7 +85,7 @@ ___
 ___
 ## 🔭 Used packages, libraries and APIs
 - flutter/material
-- flutter/services
+  - flutter/services
 - dio/dio
 - alan_voice/alan_voice
 - dart/convert
