@@ -107,7 +107,8 @@ ___
 | Add buttons to pause/stop/repeat sentence     |     ✅     |
 | Interface to write number of repetitions      |     ✅     |
 | Playback sentences for memorize               |     ✅     |
-| Processing of voice commands via Alan platform|     ❌     |
+| Processing of voice commands via Alan platform|     ✅     |
+| Repeating by blocks                           |     ❌     |
 | Adaptation of different voice tones           |     ❌     |
 | Increased features in the app settings        |     ❌     |
 | Add new memorize techniques                   |     ❌     |
