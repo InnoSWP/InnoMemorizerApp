@@ -145,34 +145,33 @@ class Memorize extends State<MemorizeScreen> {
     if (isPlayingNow) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       int numberOfRepetitions = (prefs.getInt('numberOfRepetitions') ?? 1);
-      _speak();
 
-      if (_currentIndex < widget.sentences.length) {
-        setState(() {
-          if (prefs.getBool('repeatEverySentence') ?? false) {
-            if (amountRepeated + 1 < numberOfRepetitions) {
-              ++amountRepeated;
-            } else {
-              incrementCurrentIndex();
-              amountRepeated = 0;
-            }
-          } else if (isOnRepeat) {
-            if (amountRepeated < numberOfRepetitions) {
-              ++amountRepeated;
-            } else {
-              incrementCurrentIndex();
-              onRepeat();
-            }
+
+      if (isOnRepeat) {
+
+      } else {
+        if (prefs.getBool('repeatEverySentence') ?? false) {
+          if (amountRepeated + 1 < numberOfRepetitions) {
+            ++amountRepeated;
           } else {
             incrementCurrentIndex();
+            amountRepeated = 0;
           }
+        } else {
+          incrementCurrentIndex();
+        }
+      }
 
-          _items[_currentIndex] = getHighlightedSentence(_currentIndex);
-          if (_currentIndex > 0) {
-            _items[_currentIndex - 1] = getCasualSentence(_currentIndex - 1);
-          }
-          scrollToIndex(_currentIndex);
-        });
+      setState(() {
+        _items[_currentIndex] = getHighlightedSentence(_currentIndex);
+        if (_currentIndex > 0) {
+          _items[_currentIndex - 1] = getCasualSentence(_currentIndex - 1);
+        }
+        scrollToIndex(_currentIndex);
+      });
+
+      if (isPlayingNow) { //Because it can be changed in the outer block
+        _speak();
       }
     }
   }
@@ -210,7 +209,7 @@ class Memorize extends State<MemorizeScreen> {
         _speak();
       } else {
         setState(() {
-          _pause();
+          _stop();
           isPlayingNow = false;
         });
       }
@@ -233,7 +232,6 @@ class Memorize extends State<MemorizeScreen> {
   }
 
   void onRepeat() {
-    amountRepeated = 0;
     setState(() => isOnRepeat = !isOnRepeat);
   }
 
@@ -276,10 +274,12 @@ class Memorize extends State<MemorizeScreen> {
         return InkWell(
           onTap: () {
             if (index == _currentIndex) return;
+            _stop();
             switchHighlightedSentence(_currentIndex, index);
             scrollToIndex(index);
             setState(() {
               _currentIndex = index;
+              isPlayingNow = false;
             });
           },
           child: _items[index],
@@ -558,7 +558,7 @@ class Memorize extends State<MemorizeScreen> {
     if (_currentIndex + 1 < widget.sentences.length) {
       ++_currentIndex;
     } else {
-      AlanVoice.deactivate();
+      isPlayingNow = false;
     }
   }
 }
