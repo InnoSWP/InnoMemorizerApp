@@ -3,6 +3,9 @@ import 'package:alan_voice/alan_voice.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+import 'dart:io' show Platform;
+import 'package:flutter/foundation.dart' show kDebugMode, kIsWeb;
+import 'package:flutter_tts/flutter_tts.dart';
 
 import '/../widgets/options.dart';
 import '/../common/theme.dart';
@@ -18,8 +21,17 @@ class MemorizeScreen extends StatefulWidget {
   State<StatefulWidget> createState() => Memorize();
 }
 
+enum TtsState {playing, stopped, paused, continued}
+
 class Memorize extends State<MemorizeScreen> {
+  late FlutterTts flutterTts;
+  double volume = 1.0;
+  double pitch = 1.0;
+  double rate = 0.5;
+  TtsState ttsState = TtsState.stopped;
+
   int _currentIndex = 0;
+  int _numberOfRepetitions = 0;
 
   bool isPlayingNow = false;
   bool buttonsAreActive = true;
@@ -30,70 +42,160 @@ class Memorize extends State<MemorizeScreen> {
   final ItemScrollController _scrollController = ItemScrollController();
   final List<Widget> _items = [];
 
+  bool get isIOS => !kIsWeb && Platform.isIOS;
+  bool get isAndroid => !kIsWeb && Platform.isAndroid;
+  bool get isWindows => !kIsWeb && Platform.isWindows;
+  bool get isWeb => kIsWeb;
+
+  Future _getDefaultEngine() async {
+    var engine = await flutterTts.getDefaultEngine;
+    if (engine != null) {
+      if (kDebugMode) {
+        print(engine);
+      }
+    }
+  }
+
+  initTts() {
+    flutterTts = FlutterTts();
+    _setAwaitOptions();
+    if (isAndroid) {
+      _getDefaultEngine();
+    }
+    flutterTts.setStartHandler(() {
+      setState(() {
+        if (kDebugMode) {
+          print("Playing");
+        }
+        ttsState = TtsState.playing;
+      });
+    });
+    flutterTts.setCompletionHandler(() {
+      setState(() {
+        if (kDebugMode) {
+          print("Complete");
+        }
+        ttsState = TtsState.stopped;
+      });
+    });
+    flutterTts.setCancelHandler(() {
+      setState(() {
+        if (kDebugMode) {
+          print("Cancel");
+        }
+        ttsState = TtsState.stopped;
+      });
+    });
+    if (isWeb || isIOS || isWindows) {
+      flutterTts.setPauseHandler(() {
+        setState(() {
+          if (kDebugMode) {
+            print("Paused");
+          }
+          ttsState = TtsState.paused;
+        });
+      });
+      flutterTts.setContinueHandler(() {
+        setState(() {
+          if (kDebugMode) {
+            print("Continued");
+          }
+          ttsState = TtsState.continued;
+        });
+      });
+    }
+    flutterTts.setErrorHandler((msg) {
+      setState(() {
+        if (kDebugMode) {
+          print("error: $msg");
+        }
+        ttsState = TtsState.stopped;
+      });
+    });
+  }
+
+  Future _setAwaitOptions() async {
+    await flutterTts.awaitSpeakCompletion(true);
+  }
+
+  Future _stop() async {
+    var result = await flutterTts.stop();
+    if (result == 1) setState(() => ttsState = TtsState.stopped);
+  }
+
+  Future _pause() async {
+    var result = await flutterTts.pause();
+    if (result == 1) setState(() => ttsState = TtsState.paused);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    flutterTts.stop();
+  }
+
+  Future _speak() async {
+
+    await flutterTts.setLanguage("en-US");
+    await flutterTts.setVolume(volume);
+    await flutterTts.setSpeechRate(rate);
+    await flutterTts.setPitch(pitch);
+
+    await flutterTts.speak(widget.sentences[_currentIndex]!);
+
+    if (isPlayingNow) {
+      if (_currentIndex + 1 < widget.sentences.length) {
+        setState(() {
+          if (isOnRepeat) {
+            if (amountRepeated + 1 < _numberOfRepetitions) {
+              ++amountRepeated;
+            } else {
+              onRepeat();
+            }
+          } else {
+            ++_currentIndex;
+          }
+
+          _items[_currentIndex] = getHighlightedSentence(_currentIndex);
+          _items[_currentIndex - 1] = getCasualSentence(_currentIndex - 1);
+          _scrollController.scrollTo(
+              index: _currentIndex,
+              duration: const Duration(milliseconds: 400));
+        });
+        _speak();
+      }
+    }
+  }
+
   Memorize() {
+    voiceCommand();
+  }
+
+  voiceCommand(){
     /// Init Alan Button with project key from Alan Studio
     AlanVoice.addButton(
         "8118d5e4d24668be5a3c671a4e29cd092e956eca572e1d8b807a3e2338fdd0dc/stage");
 
     /// Handle commands from Alan Studio
     AlanVoice.onCommand.add((command) async {
-      debugPrint('got new command ${command.toString()}');
 
-      if (command.data['command'] == 'finishedPlaying') {
-        //This will not fire if Alan is disabled
-
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        int numberOfRepetitions = (prefs.getInt('numberOfRepetitions') ?? 1);
-
-        if (_currentIndex < widget.sentences.length) {
-          setState(() {
-            if (prefs.getBool('repeatEverySentence') ?? false) {
-              if (amountRepeated + 1 < numberOfRepetitions) {
-                ++amountRepeated;
-              } else {
-                incrementCurrentIndex();
-                amountRepeated = 0;
-              }
-            } else if (isOnRepeat) {
-              if (amountRepeated < numberOfRepetitions) {
-                ++amountRepeated;
-              } else {
-                incrementCurrentIndex();
-                onRepeat();
-              }
-            } else {
-              incrementCurrentIndex();
-            }
-
-            _items[_currentIndex] = getHighlightedSentence(_currentIndex);
-            scrollToIndex(_currentIndex);
-            if (_currentIndex > 0) {
-              _items[_currentIndex - 1] = getCasualSentence(_currentIndex - 1);
-            }
-          });
-
-          playSentence();
-        }
-      } else if (command.data['command'] == 'play') {
+      if (command.data["command"] == "play") {
         if (!isPlayingNow) {
           onClickPlayPause();
         }
-      } else if (command.data['command'] == 'stop') {
+      } else if (command.data["command"] == "stop") {
         if (isPlayingNow) {
           onClickPlayPause();
         }
-      } else if (command.data['command'] == 'back') {
+      } else if (command.data["command"] == "back") {
         onClickRewind();
-      } else if (command.data['command'] == 'forward') {
+      } else if (command.data["command"] == "forward") {
         onClickForward();
       }
-    });
+    }
+    );
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
 
   void scrollToIndex(int index) {
     Future.delayed(const Duration(milliseconds: 100), () {
@@ -110,7 +212,6 @@ class Memorize extends State<MemorizeScreen> {
   void onClickPlayPause() {
     if (buttonsAreActive) {
       if (!isPlayingNow) {
-        AlanVoice.activate();
 
         setState(() {
           isPlayingNow = true;
@@ -123,27 +224,22 @@ class Memorize extends State<MemorizeScreen> {
           });
         });
 
-        playSentence();
-      } else {
-        AlanVoice.deactivate();
+        _speak();
 
+      } else {
         setState(() {
+          _pause();
           isPlayingNow = false;
         });
       }
     }
   }
 
-  void playSentence() {
-    var params = jsonEncode({"text": widget.sentences[_currentIndex]!});
-    AlanVoice.callProjectApi("script::say", params);
-  }
-
   void onClickRewind() {
     if (buttonsAreActive) {
       setState(() {
         if (_currentIndex > 0) {
-          AlanVoice.deactivate();
+          _stop();
           isPlayingNow = false;
           switchHighlightedSentence(_currentIndex, _currentIndex - 1);
 
@@ -163,9 +259,8 @@ class Memorize extends State<MemorizeScreen> {
     if (buttonsAreActive) {
       setState(() {
         if (_currentIndex < widget.sentences.length - 1) {
-          AlanVoice.deactivate();
           isPlayingNow = false;
-
+          _stop();
           switchHighlightedSentence(_currentIndex, _currentIndex + 1);
 
           ++_currentIndex;
@@ -177,6 +272,7 @@ class Memorize extends State<MemorizeScreen> {
 
   @override
   void initState() {
+    initTts();
     super.initState();
     SharedPreferences.getInstance().then((prefs) {
       prefs.setInt('numberOfRepetitions', 1);
@@ -189,6 +285,7 @@ class Memorize extends State<MemorizeScreen> {
           : getCasualSentence(i));
     }
   }
+
 
   Widget getCurrentSentences() {
     return ScrollablePositionedList.separated(
@@ -440,13 +537,5 @@ class Memorize extends State<MemorizeScreen> {
         ),
       ),
     );
-  }
-
-  void incrementCurrentIndex() {
-    if (_currentIndex + 1 < widget.sentences.length) {
-      ++_currentIndex;
-    } else {
-      AlanVoice.deactivate();
-    }
   }
 }
