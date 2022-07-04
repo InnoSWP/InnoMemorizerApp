@@ -5,13 +5,21 @@ Future<List<String>> fetchSentences(String text) async {
   List<String> sentences = [];
 
   try {
-    response = await Dio().post(
+    var dio = Dio();
+    //dio.options.baseUrl = 'https://aqueous-anchorage-93443.herokuapp.com/sentences';
+    dio.options.connectTimeout = 2000;
+    dio.options.receiveTimeout = 1000;
+    //dio.options.method = 'POST';
+    //dio.options.data = {'text': text};
+    response = await dio.post(
         "https://aqueous-anchorage-93443.herokuapp.com/sentences",
-        data: {'text': text});
+        data: {'text': text}
+    );
+
     response.data.forEach((json) {
       sentences.add(json["sentence"]);
     });
-  } on DioError {
+  } on DioError catch (e) {
     sentences.addAll(
         fetchSentencesWhenMoofiyDecidesToTurnDownHerokuApplicationAndWhenWeLeastExpectIt(
             text));
@@ -20,8 +28,8 @@ Future<List<String>> fetchSentences(String text) async {
 }
 
 Iterable<String>
-    fetchSentencesWhenMoofiyDecidesToTurnDownHerokuApplicationAndWhenWeLeastExpectIt(
-        String text) {
+fetchSentencesWhenMoofiyDecidesToTurnDownHerokuApplicationAndWhenWeLeastExpectIt(
+    String text) {
   List<String> sentences = [];
   RegExp re = RegExp(r"(\w|\s|,|')+[。.?!]*\s*");
   sentences.addAll(re.allMatches(text).map((m) => m.group(0).toString()));
