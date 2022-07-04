@@ -168,12 +168,10 @@ class Memorize extends State<MemorizeScreen> {
           }
 
           _items[_currentIndex] = getHighlightedSentence(_currentIndex);
-          _scrollController.scrollTo(
-              index: _currentIndex,
-              duration: const Duration(milliseconds: 400));
           if (_currentIndex > 0) {
             _items[_currentIndex - 1] = getCasualSentence(_currentIndex - 1);
           }
+          scrollToIndex(_currentIndex);
         });
       }
     }
