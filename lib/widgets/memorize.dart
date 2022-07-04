@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:alan_voice/alan_voice.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
 import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart' show kDebugMode, kIsWeb;
 import 'package:flutter_tts/flutter_tts.dart';
@@ -43,8 +42,11 @@ class Memorize extends State<MemorizeScreen> {
   final List<Widget> _items = [];
 
   bool get isIOS => !kIsWeb && Platform.isIOS;
+
   bool get isAndroid => !kIsWeb && Platform.isAndroid;
+
   bool get isWindows => !kIsWeb && Platform.isWindows;
+
   bool get isWeb => kIsWeb;
 
   Future _getDefaultEngine() async {
@@ -135,7 +137,6 @@ class Memorize extends State<MemorizeScreen> {
   }
 
   Future _speak() async {
-
     await flutterTts.setLanguage("en-US");
     await flutterTts.setVolume(volume);
     await flutterTts.setSpeechRate(rate);
@@ -171,32 +172,6 @@ class Memorize extends State<MemorizeScreen> {
     voiceCommand();
   }
 
-  voiceCommand(){
-    /// Init Alan Button with project key from Alan Studio
-    AlanVoice.addButton(
-        "8118d5e4d24668be5a3c671a4e29cd092e956eca572e1d8b807a3e2338fdd0dc/stage");
-
-    /// Handle commands from Alan Studio
-    AlanVoice.onCommand.add((command) async {
-
-      if (command.data["command"] == "play") {
-        if (!isPlayingNow) {
-          onClickPlayPause();
-        }
-      } else if (command.data["command"] == "stop") {
-        if (isPlayingNow) {
-          onClickPlayPause();
-        }
-      } else if (command.data["command"] == "back") {
-        onClickRewind();
-      } else if (command.data["command"] == "forward") {
-        onClickForward();
-      }
-    }
-    );
-  }
-
-
   void scrollToIndex(int index) {
     Future.delayed(const Duration(milliseconds: 100), () {
       _scrollController.scrollTo(
@@ -212,7 +187,6 @@ class Memorize extends State<MemorizeScreen> {
   void onClickPlayPause() {
     if (buttonsAreActive) {
       if (!isPlayingNow) {
-
         setState(() {
           isPlayingNow = true;
 
@@ -225,7 +199,6 @@ class Memorize extends State<MemorizeScreen> {
         });
 
         _speak();
-
       } else {
         setState(() {
           _pause();
@@ -277,7 +250,7 @@ class Memorize extends State<MemorizeScreen> {
     SharedPreferences.getInstance().then((prefs) {
       prefs.setInt('numberOfRepetitions', 1);
       prefs.setBool('repeatEverySentence', false);
-      prefs.setBool('enableVoiceCommand', false);
+      prefs.setBool('enableVoiceCommand', true);
     });
     for (int i = 0; i < widget.sentences.length; i++) {
       _items.add(i == _currentIndex
@@ -307,8 +280,14 @@ class Memorize extends State<MemorizeScreen> {
       separatorBuilder: (BuildContext context, int index) {
         return Divider(
           thickness: 1,
-          indent: MediaQuery.of(context).size.width * 0.035,
-          endIndent: MediaQuery.of(context).size.width * 0.035,
+          indent: MediaQuery
+              .of(context)
+              .size
+              .width * 0.035,
+          endIndent: MediaQuery
+              .of(context)
+              .size
+              .width * 0.035,
           color: CustomColors.greyBorder.withOpacity(0.5),
         );
       },
@@ -398,7 +377,10 @@ class Memorize extends State<MemorizeScreen> {
         actions: [
           IconButton(
               padding: EdgeInsets.only(
-                  right: MediaQuery.of(context).size.width * 0.02),
+                  right: MediaQuery
+                      .of(context)
+                      .size
+                      .width * 0.02),
               onPressed: () {
                 setState(() {
                   Navigator.push(
@@ -417,13 +399,22 @@ class Memorize extends State<MemorizeScreen> {
         ],
       ),
       body: Padding(
-        padding: EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.05),
+        padding: EdgeInsets.only(top: MediaQuery
+            .of(context)
+            .size
+            .width * 0.05),
         child: Column(
           children: <Widget>[
             Container(
               padding: EdgeInsets.only(
-                left: MediaQuery.of(context).size.width * 0.05,
-                right: MediaQuery.of(context).size.width * 0.05,
+                left: MediaQuery
+                    .of(context)
+                    .size
+                    .width * 0.05,
+                right: MediaQuery
+                    .of(context)
+                    .size
+                    .width * 0.05,
               ),
               child: Container(
                 decoration: BoxDecoration(
@@ -434,26 +425,45 @@ class Memorize extends State<MemorizeScreen> {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.55,
+                    height: MediaQuery
+                        .of(context)
+                        .size
+                        .height * 0.55,
                     child: getCurrentSentences()),
               ),
             ),
             Container(
               padding: EdgeInsets.only(
-                left: MediaQuery.of(context).size.width * 0.05,
-                right: MediaQuery.of(context).size.width * 0.05,
+                left: MediaQuery
+                    .of(context)
+                    .size
+                    .width * 0.05,
+                right: MediaQuery
+                    .of(context)
+                    .size
+                    .width * 0.05,
               ),
               child: Container(
                 padding: EdgeInsets.only(
-                    left: MediaQuery.of(context).size.width * 0.05,
-                    right: MediaQuery.of(context).size.width * 0.05),
+                    left: MediaQuery
+                        .of(context)
+                        .size
+                        .width * 0.05,
+                    right: MediaQuery
+                        .of(context)
+                        .size
+                        .width * 0.05),
                 child: SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.10,
+                    height: MediaQuery
+                        .of(context)
+                        .size
+                        .height * 0.10,
                     child: Row(
                       children: [
                         Expanded(
                           child: Text(
-                            '${_currentIndex + 1}/${widget.sentences.length} complete',
+                            '${_currentIndex + 1}/${widget.sentences
+                                .length} complete',
                             style: const TextStyle(
                               fontWeight: FontWeight.w500,
                               fontSize: 24,
@@ -477,15 +487,24 @@ class Memorize extends State<MemorizeScreen> {
             ),
             Container(
                 padding: EdgeInsets.only(
-                    top: MediaQuery.of(context).size.height * 0.025,
-                    right: MediaQuery.of(context).size.height * 0.04),
+                    top: MediaQuery
+                        .of(context)
+                        .size
+                        .height * 0.025,
+                    right: MediaQuery
+                        .of(context)
+                        .size
+                        .height * 0.04),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Container(
                       padding: EdgeInsets.only(
-                          left: MediaQuery.of(context).size.width * 0.05),
+                          left: MediaQuery
+                              .of(context)
+                              .size
+                              .width * 0.05),
                       child: Ink(
                         decoration: ShapeDecoration(
                           color: Color.fromRGBO(
@@ -537,5 +556,39 @@ class Memorize extends State<MemorizeScreen> {
         ),
       ),
     );
+  }
+
+  voiceCommand() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (prefs.getBool('enableVoiceCommand') ?? false) {
+      /// Init Alan Button with project key from Alan Studio
+      AlanVoice.addButton(
+          "8118d5e4d24668be5a3c671a4e29cd092e956eca572e1d8b807a3e2338fdd0dc/stage");
+
+      /// Handle commands from Alan Studio
+      AlanVoice.onCommand.add((command) async {
+        if (command.data["command"] == "play") {
+          AlanVoice.deactivate();
+          _stop();
+          if (!isPlayingNow) {
+            onClickPlayPause();
+          }
+        } else if (command.data["command"] == "stop") {
+          AlanVoice.deactivate();
+          _stop();
+          if (isPlayingNow) {
+            onClickPlayPause();
+          }
+        } else if (command.data["command"] == "back") {
+          AlanVoice.deactivate();
+          _stop();
+          onClickRewind();
+        } else if (command.data["command"] == "forward") {
+          AlanVoice.deactivate();
+          _stop();
+          onClickForward();
+        }
+      });
+    }
   }
 }
