@@ -5,7 +5,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart' show kDebugMode, kIsWeb;
 import 'package:flutter_tts/flutter_tts.dart';
-
 import '/../widgets/options.dart';
 import '/../common/theme.dart';
 
@@ -20,7 +19,7 @@ class MemorizeScreen extends StatefulWidget {
   State<StatefulWidget> createState() => Memorize();
 }
 
-enum TtsState {playing, stopped, paused, continued}
+enum TtsState { playing, stopped, paused, continued }
 
 class Memorize extends State<MemorizeScreen> {
   late FlutterTts flutterTts;
@@ -30,7 +29,6 @@ class Memorize extends State<MemorizeScreen> {
   TtsState ttsState = TtsState.stopped;
 
   int _currentIndex = 0;
-  int _numberOfRepetitions = 0;
 
   bool isPlayingNow = false;
   bool buttonsAreActive = true;
@@ -145,25 +143,38 @@ class Memorize extends State<MemorizeScreen> {
     await flutterTts.speak(widget.sentences[_currentIndex]!);
 
     if (isPlayingNow) {
-      if (_currentIndex + 1 < widget.sentences.length) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      int numberOfRepetitions = (prefs.getInt('numberOfRepetitions') ?? 1);
+      _speak();
+
+      if (_currentIndex < widget.sentences.length) {
         setState(() {
-          if (isOnRepeat) {
-            if (amountRepeated + 1 < _numberOfRepetitions) {
+          if (prefs.getBool('repeatEverySentence') ?? false) {
+            if (amountRepeated + 1 < numberOfRepetitions) {
               ++amountRepeated;
             } else {
+              incrementCurrentIndex();
+              amountRepeated = 0;
+            }
+          } else if (isOnRepeat) {
+            if (amountRepeated < numberOfRepetitions) {
+              ++amountRepeated;
+            } else {
+              incrementCurrentIndex();
               onRepeat();
             }
           } else {
-            ++_currentIndex;
+            incrementCurrentIndex();
           }
 
           _items[_currentIndex] = getHighlightedSentence(_currentIndex);
-          _items[_currentIndex - 1] = getCasualSentence(_currentIndex - 1);
           _scrollController.scrollTo(
               index: _currentIndex,
               duration: const Duration(milliseconds: 400));
+          if (_currentIndex > 0) {
+            _items[_currentIndex - 1] = getCasualSentence(_currentIndex - 1);
+          }
         });
-        _speak();
       }
     }
   }
@@ -259,7 +270,6 @@ class Memorize extends State<MemorizeScreen> {
     }
   }
 
-
   Widget getCurrentSentences() {
     return ScrollablePositionedList.separated(
       itemScrollController: _scrollController,
@@ -280,14 +290,8 @@ class Memorize extends State<MemorizeScreen> {
       separatorBuilder: (BuildContext context, int index) {
         return Divider(
           thickness: 1,
-          indent: MediaQuery
-              .of(context)
-              .size
-              .width * 0.035,
-          endIndent: MediaQuery
-              .of(context)
-              .size
-              .width * 0.035,
+          indent: MediaQuery.of(context).size.width * 0.035,
+          endIndent: MediaQuery.of(context).size.width * 0.035,
           color: CustomColors.greyBorder.withOpacity(0.5),
         );
       },
@@ -377,10 +381,7 @@ class Memorize extends State<MemorizeScreen> {
         actions: [
           IconButton(
               padding: EdgeInsets.only(
-                  right: MediaQuery
-                      .of(context)
-                      .size
-                      .width * 0.02),
+                  right: MediaQuery.of(context).size.width * 0.02),
               onPressed: () {
                 setState(() {
                   Navigator.push(
@@ -399,22 +400,13 @@ class Memorize extends State<MemorizeScreen> {
         ],
       ),
       body: Padding(
-        padding: EdgeInsets.only(top: MediaQuery
-            .of(context)
-            .size
-            .width * 0.05),
+        padding: EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.05),
         child: Column(
           children: <Widget>[
             Container(
               padding: EdgeInsets.only(
-                left: MediaQuery
-                    .of(context)
-                    .size
-                    .width * 0.05,
-                right: MediaQuery
-                    .of(context)
-                    .size
-                    .width * 0.05,
+                left: MediaQuery.of(context).size.width * 0.05,
+                right: MediaQuery.of(context).size.width * 0.05,
               ),
               child: Container(
                 decoration: BoxDecoration(
@@ -425,45 +417,26 @@ class Memorize extends State<MemorizeScreen> {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: SizedBox(
-                    height: MediaQuery
-                        .of(context)
-                        .size
-                        .height * 0.55,
+                    height: MediaQuery.of(context).size.height * 0.55,
                     child: getCurrentSentences()),
               ),
             ),
             Container(
               padding: EdgeInsets.only(
-                left: MediaQuery
-                    .of(context)
-                    .size
-                    .width * 0.05,
-                right: MediaQuery
-                    .of(context)
-                    .size
-                    .width * 0.05,
+                left: MediaQuery.of(context).size.width * 0.05,
+                right: MediaQuery.of(context).size.width * 0.05,
               ),
               child: Container(
                 padding: EdgeInsets.only(
-                    left: MediaQuery
-                        .of(context)
-                        .size
-                        .width * 0.05,
-                    right: MediaQuery
-                        .of(context)
-                        .size
-                        .width * 0.05),
+                    left: MediaQuery.of(context).size.width * 0.05,
+                    right: MediaQuery.of(context).size.width * 0.05),
                 child: SizedBox(
-                    height: MediaQuery
-                        .of(context)
-                        .size
-                        .height * 0.10,
+                    height: MediaQuery.of(context).size.height * 0.10,
                     child: Row(
                       children: [
                         Expanded(
                           child: Text(
-                            '${_currentIndex + 1}/${widget.sentences
-                                .length} complete',
+                            '${_currentIndex + 1}/${widget.sentences.length} complete',
                             style: const TextStyle(
                               fontWeight: FontWeight.w500,
                               fontSize: 24,
@@ -487,24 +460,15 @@ class Memorize extends State<MemorizeScreen> {
             ),
             Container(
                 padding: EdgeInsets.only(
-                    top: MediaQuery
-                        .of(context)
-                        .size
-                        .height * 0.025,
-                    right: MediaQuery
-                        .of(context)
-                        .size
-                        .height * 0.04),
+                    top: MediaQuery.of(context).size.height * 0.025,
+                    right: MediaQuery.of(context).size.height * 0.04),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Container(
                       padding: EdgeInsets.only(
-                          left: MediaQuery
-                              .of(context)
-                              .size
-                              .width * 0.05),
+                          left: MediaQuery.of(context).size.width * 0.05),
                       child: Ink(
                         decoration: ShapeDecoration(
                           color: Color.fromRGBO(
@@ -589,6 +553,14 @@ class Memorize extends State<MemorizeScreen> {
           onClickForward();
         }
       });
+    }
+  }
+
+  void incrementCurrentIndex() {
+    if (_currentIndex + 1 < widget.sentences.length) {
+      ++_currentIndex;
+    } else {
+      AlanVoice.deactivate();
     }
   }
 }
