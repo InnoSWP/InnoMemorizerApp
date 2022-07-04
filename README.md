@@ -11,7 +11,7 @@ ___
 
 ## 📺 Demo video
 
-[<img src="assets/icons/video.png" height="100"/>](https://youtube.com/shorts/QQ22qtIBW9E "DEMO")
+[<img src="assets/icons/video.png" height="100"/>](https://www.youtube.com/shorts/Z5k-YGUFxJM) "DEMO")
 
 ___
 ## 🏠 Pages
