@@ -7,7 +7,7 @@ IMP - an innovative open source application that helps people memorize text more
 
 ___
 ## ⬇️ Available
-[<img src="assets/icons/apk.gif" height="100"/>](https://drive.google.com/file/d/15I3s-XHqV14yyn8KTOzr_W4EnYBbq7Mh/view?usp=sharing "APK link")
+[<img src="assets/icons/apk.gif" height="100"/>](https://drive.google.com/drive/folders/1cYA0BIyeSuV3Q47QqUQfrtSUU3zuBJkG?usp=sharing "APK link")
 
 ## 📺 Demo video
 
