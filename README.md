@@ -53,7 +53,7 @@ ___
 
 </td>
 <td>
-    <img src="https://github.com/InnoSWP/InnoMemorizerApp/blob/main/assets/screens/paste.png?raw=true" alt="type page" width="200"/>
+    <img src="https://github.com/InnoSWP/InnoMemorizerApp/blob/main/assets/screens/input.png?raw=true" alt="input page" width="200"/>
 </td>
 
 </tr>
