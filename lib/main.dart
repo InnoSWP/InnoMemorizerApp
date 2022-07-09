@@ -4,11 +4,12 @@ import 'package:toggle_switch/toggle_switch.dart';
 
 import '/widgets/upload.dart';
 import '/widgets/paste_text.dart';
-
+import '/widgets/info.dart';
 import 'common/theme.dart';
 
 void main() {
   runApp(const MemorizationApp());
+  //runApp(const Info());
 }
 
 class MemorizationApp extends StatelessWidget {

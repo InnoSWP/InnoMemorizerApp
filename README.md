@@ -60,6 +60,23 @@ ___
     
 <tr>
 <td>
+
+### 🔴 Network page
+<p>
+    Disable voice commands <br>
+    if we dont have network <br>
+    to work with API Alan <br>
+</p>
+
+</td>
+<td>
+    <img src="https://github.com/InnoSWP/InnoMemorizerApp/blob/main/assets/network.png?raw=true" alt="upload page" width="200"/>
+</td>
+</tr>
+    
+<tr>
+<td>
+
     
 ### ✨ Memorizing page
 <p>    
