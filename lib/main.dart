@@ -9,8 +9,8 @@ import '/widgets/info.dart';
 import 'common/theme.dart';
 
 void main() {
-  runApp(const MemorizationApp());
-  //runApp(const Info());
+  //runApp(const MemorizationApp());
+  runApp(const Info());
 }
 
 class MemorizationApp extends StatelessWidget {
