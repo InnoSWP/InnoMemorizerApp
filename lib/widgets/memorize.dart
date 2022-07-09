@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart' show kDebugMode, kIsWeb;
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import '/../widgets/options.dart';
 import '/../common/theme.dart';
 
@@ -27,6 +28,7 @@ class Memorize extends State<MemorizeScreen> {
   double pitch = 1.0;
   double rate = 0.5;
   TtsState ttsState = TtsState.stopped;
+  bool _hasInternetConnection = true;
 
   int _currentIndex = 0;
 
@@ -146,9 +148,7 @@ class Memorize extends State<MemorizeScreen> {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       int numberOfRepetitions = (prefs.getInt('numberOfRepetitions') ?? 1);
 
-
       if (isOnRepeat) {
-
       } else {
         if (prefs.getBool('repeatEverySentence') ?? false) {
           if (amountRepeated + 1 < numberOfRepetitions) {
@@ -170,7 +170,8 @@ class Memorize extends State<MemorizeScreen> {
         scrollToIndex(_currentIndex);
       });
 
-      if (isPlayingNow) { //Because it can be changed in the outer block
+      if (isPlayingNow) {
+        //Because it can be changed in the outer block
         _speak();
       }
     }
@@ -264,6 +265,13 @@ class Memorize extends State<MemorizeScreen> {
           ? getHighlightedSentence(i)
           : getCasualSentence(i));
     }
+
+    InternetConnectionChecker().onStatusChange.listen((status) {
+      final hasInternetConnection =
+          status == InternetConnectionStatus.connected;
+
+      setState(() => _hasInternetConnection = hasInternetConnection);
+    });
   }
 
   Widget getCurrentSentences() {
@@ -401,6 +409,17 @@ class Memorize extends State<MemorizeScreen> {
         padding: EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.05),
         child: Column(
           children: <Widget>[
+            (!_hasInternetConnection
+                ? Container(
+                    padding: const EdgeInsets.only(left: 2, right: 2),
+                    child: Row(children: const [
+                      Text(
+                        "Voice commands deactivated due to networks missing",
+                        style: TextStyle(color: Colors.red),
+                      ),
+                      Icon(Icons.warning, color: Colors.red),
+                    ]))
+                : Container()),
             Container(
               padding: EdgeInsets.only(
                 left: MediaQuery.of(context).size.width * 0.05,
