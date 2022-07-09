@@ -258,6 +258,7 @@ class Upload extends State<UploadScreen> with TickerProviderStateMixin {
                       ),
                     ),
                   ),
+                  key: const Key("Upload file button"),
                   child: const Text('START MEMORIZE',
                       style: TextStyle(
                         color: Colors.white,

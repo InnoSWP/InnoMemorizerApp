@@ -16,6 +16,10 @@ class Type extends State<TypeScreen> with TickerProviderStateMixin {
   late AnimationController animationController;
   final textController = TextEditingController();
 
+  Future<void> thunk(dynamic value) {
+    return value;
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -141,18 +145,20 @@ class Type extends State<TypeScreen> with TickerProviderStateMixin {
                 return ElevatedButton(
                     onPressed: value.text.isNotEmpty
                         ? () {
-                            FocusManager.instance.primaryFocus?.unfocus();
-                            animationController.forward();
-                            fetchSentences(value.text).then((sentences) {
-                              animationController.fling();
-                              animationController.reset();
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => MemorizeScreen(
-                                      title: 'Memorize', sentences: sentences),
-                                ),
-                              );
+                            setState(() {
+                              FocusManager.instance.primaryFocus?.unfocus();
+                              animationController.forward();
+                              fetchSentences(value.text).then((sentences) {
+                                animationController.fling();
+                                animationController.reset();
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => MemorizeScreen(
+                                        title: 'Memorize', sentences: sentences),
+                                  ),
+                                );
+                              });
                             });
                           }
                         : null,
@@ -174,6 +180,7 @@ class Type extends State<TypeScreen> with TickerProviderStateMixin {
                         ),
                       ),
                     ),
+                    key: const Key("Upload text button"),
                     child: const Text('START MEMORIZE',
                         style: TextStyle(
                           color: Colors.white,
