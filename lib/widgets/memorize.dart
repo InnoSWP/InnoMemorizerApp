@@ -125,10 +125,10 @@ class Memorize extends State<MemorizeScreen> {
     if (result == 1) setState(() => ttsState = TtsState.stopped);
   }
 
-  Future _pause() async {
-    var result = await flutterTts.pause();
-    if (result == 1) setState(() => ttsState = TtsState.paused);
-  }
+  // Future _pause() async {
+  //   var result = await flutterTts.pause();
+  //   if (result == 1) setState(() => ttsState = TtsState.paused);
+  // }
 
   @override
   void dispose() {
