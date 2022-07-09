@@ -9,6 +9,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'common/theme.dart';
 
+<<<<<<< HEAD
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -17,6 +18,11 @@ void main() async {
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
 
   runApp(const MemorizationApp());
+=======
+void main() {
+  //runApp(const MemorizationApp());
+  runApp(const Info());
+>>>>>>> 42fd858ff150658ec0c6818afaa1f8351a30e319
 }
 
 
