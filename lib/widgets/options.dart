@@ -116,7 +116,7 @@ class _OptionsScreenState extends State<OptionsScreen> {
           elevation: 0,
           backgroundColor: CustomColors.background,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back,
+            icon: const Icon(Icons.arrow_back_rounded,
                 color: CustomColors.greyText, size: 40),
             onPressed: () async {
               if (_repeatAmountController.text.isNotEmpty) {

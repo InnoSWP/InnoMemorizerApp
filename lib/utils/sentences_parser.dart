@@ -6,11 +6,9 @@ Future<List<String>> fetchSentences(String text) async {
 
   try {
     var dio = Dio();
-    //dio.options.baseUrl = 'https://aqueous-anchorage-93443.herokuapp.com/sentences';
     dio.options.connectTimeout = 2000;
     dio.options.receiveTimeout = 1000;
-    //dio.options.method = 'POST';
-    //dio.options.data = {'text': text};
+
     response = await dio.post(
         "https://aqueous-anchorage-93443.herokuapp.com/sentences",
         data: {'text': text}

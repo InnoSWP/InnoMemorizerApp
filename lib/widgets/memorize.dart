@@ -402,7 +402,8 @@ class Memorize extends State<MemorizeScreen> {
                 Icons.settings_rounded,
                 color: CustomColors.greyText,
                 size: 40,
-              ))
+              ),
+              key: const Key("Settings button"))
         ],
       ),
       body: Padding(
@@ -529,6 +530,7 @@ class Memorize extends State<MemorizeScreen> {
                         color: Colors.white,
                         onPressed: onClickForward,
                         iconSize: 40,
+                        key: const Key("Next sentence"),
                       ),
                     ),
                   ],

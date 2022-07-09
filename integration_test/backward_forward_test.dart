@@ -1,4 +1,3 @@
-import 'package:flutter/services.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -10,10 +9,10 @@ Future<void> addDelay(int ms) async {
 }
 
 void main() {
-
   final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   binding.framePolicy = LiveTestWidgetsFlutterBindingFramePolicy.fullyLive;
-  group('end-to-end test', () {
+
+  group('App can go forward and backward preserving functionality', () {
     testWidgets('Proceed to the memorize screen after inputting text',
         (tester) async {
       Key buttonKey = const Key("Upload text button");
@@ -31,7 +30,7 @@ void main() {
       await tester.pumpAndSettle();
 
       await tester.tap(find.byKey(buttonKey));
-      await addDelay(8000);
+      await addDelay(6000);
       await tester.pumpAndSettle();
       tester.printToConsole("Switched to memorize screen");
 
@@ -45,11 +44,12 @@ void main() {
           textInput,
           "Hat is matte black. Got "
           "the boots that's black to match.");
-      tester.printToConsole("Pasted the text in the text field for the second time");
+      tester.printToConsole(
+          "Pasted the text in the text field for the second time");
       await tester.pumpAndSettle();
 
       await tester.tap(find.byKey(buttonKey));
-      await addDelay(8000);
+      await addDelay(6000);
       await tester.pumpAndSettle();
 
       expect(find.text('Hat is matte black. '), findsOneWidget);
