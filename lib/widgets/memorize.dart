@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:alan_voice/alan_voice.dart';
+//import 'package:alan_voice/alan_voice.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io' show Platform;
@@ -177,9 +177,9 @@ class Memorize extends State<MemorizeScreen> {
     }
   }
 
-  Memorize() {
-    voiceCommand();
-  }
+//   Memorize() {
+//     voiceCommand();
+//   }
 
   void scrollToIndex(int index) {
     Future.delayed(const Duration(milliseconds: 100), () {
@@ -539,39 +539,39 @@ class Memorize extends State<MemorizeScreen> {
     );
   }
 
-  voiceCommand() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    if (prefs.getBool('enableVoiceCommand') ?? false) {
-      /// Init Alan Button with project key from Alan Studio
-      AlanVoice.addButton(
-          "8118d5e4d24668be5a3c671a4e29cd092e956eca572e1d8b807a3e2338fdd0dc/stage");
+//   voiceCommand() async {
+//     SharedPreferences prefs = await SharedPreferences.getInstance();
+//     if (prefs.getBool('enableVoiceCommand') ?? false) {
+//       /// Init Alan Button with project key from Alan Studio
+//       AlanVoice.addButton(
+//           "8118d5e4d24668be5a3c671a4e29cd092e956eca572e1d8b807a3e2338fdd0dc/stage");
 
-      /// Handle commands from Alan Studio
-      AlanVoice.onCommand.add((command) async {
-        if (command.data["command"] == "play") {
-          AlanVoice.deactivate();
-          _stop();
-          if (!isPlayingNow) {
-            onClickPlayPause();
-          }
-        } else if (command.data["command"] == "stop") {
-          AlanVoice.deactivate();
-          _stop();
-          if (isPlayingNow) {
-            onClickPlayPause();
-          }
-        } else if (command.data["command"] == "back") {
-          AlanVoice.deactivate();
-          _stop();
-          onClickRewind();
-        } else if (command.data["command"] == "forward") {
-          AlanVoice.deactivate();
-          _stop();
-          onClickForward();
-        }
-      });
-    }
-  }
+//       /// Handle commands from Alan Studio
+//       AlanVoice.onCommand.add((command) async {
+//         if (command.data["command"] == "play") {
+//           AlanVoice.deactivate();
+//           _stop();
+//           if (!isPlayingNow) {
+//             onClickPlayPause();
+//           }
+//         } else if (command.data["command"] == "stop") {
+//           AlanVoice.deactivate();
+//           _stop();
+//           if (isPlayingNow) {
+//             onClickPlayPause();
+//           }
+//         } else if (command.data["command"] == "back") {
+//           AlanVoice.deactivate();
+//           _stop();
+//           onClickRewind();
+//         } else if (command.data["command"] == "forward") {
+//           AlanVoice.deactivate();
+//           _stop();
+//           onClickForward();
+//         }
+//       });
+//     }
+//   }
 
   void incrementCurrentIndex() {
     if (_currentIndex + 1 < widget.sentences.length) {
