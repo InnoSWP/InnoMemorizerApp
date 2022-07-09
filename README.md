@@ -64,7 +64,7 @@ ___
 ### 🔴 Network page
 <p>
     Disable voice commands <br>
-    if we dont have network <br>
+    if we don't have network <br>
     to work with API Alan <br>
 </p>
 

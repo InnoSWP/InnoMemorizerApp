@@ -1,16 +1,24 @@
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:toggle_switch/toggle_switch.dart';
-
 import '/widgets/upload.dart';
 import '/widgets/paste_text.dart';
 import '/widgets/info.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 import 'common/theme.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp();
+
+  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
+
   runApp(const MemorizationApp());
-  //runApp(const Info());
 }
+
 
 class MemorizationApp extends StatelessWidget {
   const MemorizationApp({Key? key}) : super(key: key);
