@@ -19,7 +19,7 @@ Future<List<String>> fetchSentences(String text) async {
     response.data.forEach((json) {
       sentences.add(json["sentence"]);
     });
-  } on DioError catch (e) {
+  } on DioError {
     sentences.addAll(
         fetchSentencesWhenMoofiyDecidesToTurnDownHerokuApplicationAndWhenWeLeastExpectIt(
             text));
