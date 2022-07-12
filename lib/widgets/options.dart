@@ -330,6 +330,17 @@ class _OptionsScreenState extends State<OptionsScreen> {
                     ],
                   ),
                 ),
+                Row(
+                  children: [
+                    ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all(Color.fromRGBO(103, 103, 103, 1)),
+                      ),
+                      onPressed: () {},
+                      child: const Text('information'),
+                    ),
+                  ],
+                ),
               ],
             )));
   }

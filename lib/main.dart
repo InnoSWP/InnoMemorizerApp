@@ -5,10 +5,8 @@ import 'package:toggle_switch/toggle_switch.dart';
 import '/widgets/upload.dart';
 import '/widgets/paste_text.dart';
 import 'common/theme.dart';
-// ignore: depend_on_referenced_packages
+import '/widgets/info.dart';
 import 'package:firebase_core/firebase_core.dart';
-// import 'firebase_options.dart';
-// import '/widgets/info.dart';
 
 
 void main() async {
