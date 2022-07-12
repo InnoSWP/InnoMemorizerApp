@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../common/theme.dart';
+import '/widgets/info.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class OptionsScreen extends StatefulWidget {
@@ -336,7 +337,7 @@ class _OptionsScreenState extends State<OptionsScreen> {
                       style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all(Color.fromRGBO(103, 103, 103, 1)),
                       ),
-                      onPressed: () {},
+                      onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) => const Info()));},
                       child: const Text('information'),
                     ),
                   ],

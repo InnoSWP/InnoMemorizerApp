@@ -8,7 +8,6 @@ class Info extends StatelessWidget{
     return MaterialApp(
       home: Scaffold(
           appBar: AppBar(
-           // title: Center(child: Text('List of voice commands')),
             centerTitle: true,
             title: Text('List of voice commands'),
             backgroundColor: Color.fromRGBO(72, 62, 168, 1),
@@ -16,7 +15,7 @@ class Info extends StatelessWidget{
               icon: const Icon(Icons.arrow_back_rounded,
               color: Colors.white,
               ),
-              onPressed: () {},
+              onPressed: () {Navigator.of(context).pop();},
             ),
           ),
           body: Column(
